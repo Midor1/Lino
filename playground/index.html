@@ -1,0 +1,227 @@
+<!doctype html>
+<html class="pixel-ratio-1">
+<head>
+<meta charset="utf-8">
+<title>水木书荟</title>
+<script src="https://code.jquery.com/jquery-3.2.1.js"
+  integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+  crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
+integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
+crossorigin="anonymous"></script>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<link href="https://cdn.bootcss.com/light7/0.4.3/css/light7-swipeout.css" rel="stylesheet">
+<link href="https://cdn.bootcss.com/light7/0.4.3/css/light7-swiper.css" rel="stylesheet">
+<link href="https://cdn.bootcss.com/light7/0.4.3/css/light7.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/light7/0.4.3/js/light7-swipeout.js"></script>
+<script src="https://cdn.bootcss.com/light7/0.4.3/js/light7-swiper.js"></script>
+<script src="https://cdn.bootcss.com/light7/0.4.3/js/light7.js"></script>
+<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+<link rel="shortcut icon" href="//static.hdslb.com/images/favicon.ico">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="Access-Control-Allow-Origin" content="*">
+
+</head>
+
+<body> 
+<nav class="bar bar-tab">
+<a class="tab-item active" href="#page-home">
+  <span class="icon icon-home"></span>
+  <span class="tab-label">首页</span>
+</a>
+<a class="tab-item" href="#page-me">
+  <span class="icon icon-me"></span>
+  <span class="tab-label">我</span>
+</a>
+<a class="tab-item" href="#page-search">
+  <span class="icon icon-search"></span>
+  <span class="tab-label">搜索</span>
+</a>
+<a class="tab-item" href="#page-settings">
+  <span class="icon icon-settings"></span>
+  <span class="tab-label">设置</span>
+</a>
+</nav>
+<div id="page-home" class="page page-home page-inited page-current" style="background-image: url(http://apkl.oss-cn-qingdao.aliyuncs.com/61778735_p0.png)">
+  <header class="bar bar-nav">
+    <a class="button button-link button-nav pull-left open-panel" data-panel="#panel-left" data-transition="slide-out">
+      <span class="icon icon-menu"></span>
+    </a>
+    <h1 class="title">水木书荟</h1>
+  </header>
+  <div class="content">
+	<div class="content-block" id="Live_List">
+	<live_item v-for="(item,index) in Live_Item_List" v-bind:index="index" v-bind:Live="item" @click.native="OnListItemClick(index)"></Live_Item>
+	</div>
+  </div>
+</div>
+<div id="page-me" class="page page-me">
+  <header class="bar bar-nav">
+    <a class="button button-link button-nav pull-left open-panel" data-panel="#panel-left" data-transition="slide-out">
+      <span class="icon icon-menu"></span>
+    </a>
+    <h1 class="title">个人</h1>
+  </header>
+  <div class="content">
+    <div class="page-settings">
+      <div class="list-block media-list person-card">
+        <ul>
+          <li>
+            <div href="#" class="item-content">
+              <div class="item-media"><img src="http://main-pics.oss-cn-hangzhou.aliyuncs.com/hcj.jpg" width="80"></div>
+              <div class="item-inner">
+                <div class="item-title-row">
+                  <div class="item-title">Midor</div>
+                </div>
+                <div class="item-subtitle">这是我的签名</div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="row text-center">
+        <div class="col-33">
+          <h4>？</h4>
+          <div class="color-gray">关注</div>
+        </div>
+        <div class="col-33">
+          <h4>？</h4>
+          <div class="color-gray">粉丝</div>
+        </div>
+        <div class="col-33">
+          <h4>2</h4>
+          <div class="color-gray">直播</div>
+        </div>
+      </div>
+      <div class="list-block list">
+        <ul>
+          <li class="item-content item-link">
+            <div class="item-media"><i class="icon icon-me"></i></div>
+            <div class="item-inner">
+              <div class="item-title">个人信息配置</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="content-block-title">为你推荐的内容</div>
+	  <div class="card facebook-card">
+		<div class="card-header no-border">
+		  <div class="facebook-avatar"><img src="http://main-pics.oss-cn-hangzhou.aliyuncs.com/pic-img2.png" width="34" height="34"></div>
+		  <div class="facebook-name">主播：丁一</div>
+		  <div class="facebook-date">星期日 1:23am</div>
+		</div>
+		<div class="card-content"><img src="http://main-pics.oss-cn-hangzhou.aliyuncs.com/hololens_2.jpg" width="100%"></div>
+		<div class="card-footer no-border">
+		  <a href="#" class="link">赞</a>
+		  <a href="#" class="link">评论</a>
+		  <a href="#" class="link"><span class="icon icon-share"></span>&nbsp;分享</a>
+		</div>
+	  </div>
+    </div>
+  </div>
+</div>
+<div id="page-search" class="page page-search" style="background-image: url(http://apkl.oss-cn-qingdao.aliyuncs.com/61778735_p0.png); background-size: 100%;">
+  <header class="bar bar-nav">
+    <a class="button button-link button-nav pull-left open-panel" data-panel="#panel-left" data-transition="slide-out">
+      <span class="icon icon-menu"></span>
+    </a>
+    <h1 class="title">搜索</h1>
+  </header>
+  <div class="bar bar-header-secondary">
+    <div class="searchbar">
+      <a class="searchbar-cancel">取消</a>
+      <div class="search-input">
+        <label class="icon icon-search" for="search"></label>
+        <input type="search" id="search" placeholder="输入一个房间号或主播..."/>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="page-settings" class="page page-settings">
+  <header class="bar bar-nav">
+    <a class="button button-link button-nav pull-left open-panel" data-panel="#panel-left" data-transition="slide-out">
+      <span class="icon icon-menu"></span>
+    </a>
+    <h1 class="title">设置</h1>
+  </header>
+  <div class="content">
+    <div class="page-settings">
+      <div class="list-block list">
+        <ul>
+          <li class="item-content item-link">
+            <div class="item-media"><i class="icon icon-settings"></i></div>
+            <div class="item-inner">
+              <div class="item-title">账户</div>
+            </div>
+          </li>
+          <li class="item-content item-link">
+            <div class="item-media"><i class="icon icon-me"></i></div>
+            <div class="item-inner">
+              <div class="item-title">个人</div>
+            </div>
+          </li>
+          <li class="item-content item-link">
+            <div class="item-media"><i class="icon icon-message"></i></div>
+            <div class="item-inner">
+              <div class="item-title">通知</div>
+            </div>
+          </li>
+          <li class="item-content item-link">
+            <div class="item-media"><i class="icon icon-star"></i></div>
+            <div class="item-inner">
+              <div class="item-title">订阅</div>
+            </div>
+          </li>
+          <li class="item-content item-link">
+            <div class="item-media"><i class="icon icon-friends"></i></div>
+            <div class="item-inner">
+              <div class="item-title">帮助</div>
+            </div>
+          </li>
+          <a href="#" class="open-popup open-about" data-popup=".popup-about">
+          <li class="item-content item-link">
+            <div class="item-media"><i class="icon icon-caret"></i></div>
+            <div class="item-inner">
+				<div class="item-title">关于</div>
+            </div>
+            
+          </li>
+          </a>
+        </ul>
+      </div>
+      <div class="content-block">
+        <a href="index.html" class="button button-big button-fill button-danger external">清除浏览数据</a>
+        <br>
+        <a href="index.html" class="button button-big button-fill button-danger external">注销</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="popup popup-about">
+	<div class="content-block">
+	  <h2>关于我们</h2>
+	  <p>水木书荟</p>
+	  <p>前端版本v0.1.2</p>
+	  <p>由奇怪的组织开发</p>
+	  <a href='#' onclick='Contact()'><p>联系我们</p></a>
+	  <p><a href="#" class="close-popup">返回</a></p>
+	</div>
+</div>
+<div class="panel-overlay"></div>
+<!-- Left Panel with Reveal effect -->
+<div class="panel panel-left panel-cover theme-dark" id="panel-left">
+  <div class="content-block">
+	<p>您尚未登录</p>
+	 <p><a href="login.html" class="color-primary close-panel close-nav">登录</a>以使用网站的完整功能</p>
+	 <p>还没有账号?点这里<a href="register.html" class="color-primary close-panel">注册</a>一个</p>
+	<p><a href="#" onclick="Update()">刷新</a></p>
+	<p><a href="#" class="close-panel">关闭</a></p>
+  </div>
+  <div class="list-block">
+	<!-- .... -->
+  </div>
+</div>
+<script src=".\index.js"></script>
+</body>
+</html>
