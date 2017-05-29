@@ -68,16 +68,17 @@ crossorigin="anonymous"></script>
     </a>
     <h1 class="title">个人</h1>
   </header>
-  <div class="content">
+  <div class="content" >
     <div class="page-settings">
-      <div class="list-block media-list person-card">
+    <div id = "PersonalPageStatus">
+      <div class="list-block media-list person-card" >
         <ul>
           <li>
             <div href="#" class="item-content">
               <div class="item-media"><img src="http://main-pics.oss-cn-hangzhou.aliyuncs.com/hcj.jpg" width="80"></div>
               <div class="item-inner">
                 <div class="item-title-row">
-                  <div class="item-title">Midor</div>
+                  <div class="item-title">{{nickname}}</div>
                 </div>
                 <div class="item-subtitle">这是我的签名</div>
               </div>
@@ -85,19 +86,20 @@ crossorigin="anonymous"></script>
           </li>
         </ul>
       </div>
-      <div class="row text-center">
+      <div class="row text-center" >
         <div class="col-33">
-          <h4>？</h4>
+          <h4>{{focus}}</h4>
           <div class="color-gray">关注</div>
         </div>
         <div class="col-33">
-          <h4>？</h4>
+          <h4>{{fans}}</h4>
           <div class="color-gray">粉丝</div>
         </div>
         <div class="col-33">
-          <h4>2</h4>
+          <h4>{{LiveAmount}}</h4>
           <div class="color-gray">直播</div>
         </div>
+      </div>
       </div>
       <div class="list-block list">
         <ul>
@@ -109,20 +111,10 @@ crossorigin="anonymous"></script>
           </li>
         </ul>
       </div>
-      <div class="content-block-title">为你推荐的内容</div>
-	  <div class="card facebook-card">
-		<div class="card-header no-border">
-		  <div class="facebook-avatar"><img src="http://main-pics.oss-cn-hangzhou.aliyuncs.com/pic-img2.png" width="34" height="34"></div>
-		  <div class="facebook-name">主播：丁一</div>
-		  <div class="facebook-date">星期日 1:23am</div>
-		</div>
-		<div class="card-content"><img src="http://main-pics.oss-cn-hangzhou.aliyuncs.com/hololens_2.jpg" width="100%"></div>
-		<div class="card-footer no-border">
-		  <a href="#" class="link">赞</a>
-		  <a href="#" class="link">评论</a>
-		  <a href="#" class="link"><span class="icon icon-share"></span>&nbsp;分享</a>
-		</div>
-	  </div>
+      <div class="content-block-title">往期图文直播</div>
+	  <div class="content-block" id="PersonalPage_Live_List" > 
+            <live_item v-for="(item,index) in Live_Item_List" :key="index" v-bind:index="index" v-bind:Live="item" @click.native="OnListItemClick(item)"></Live_Item>
+        </div>
     </div>
   </div>
 </div>
