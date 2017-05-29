@@ -1,4 +1,4 @@
-<!doctype html>
+﻿ <!doctype html>
 <html class="pixel-ratio-1">
 <head>
 <meta charset="utf-8">
@@ -15,10 +15,34 @@ crossorigin="anonymous"></script>
 <script src="https://cdn.bootcss.com/light7/0.4.3/js/light7-swipeout.js"></script>
 <script src="https://cdn.bootcss.com/light7/0.4.3/js/light7-swiper.js"></script>
 <script src="https://cdn.bootcss.com/light7/0.4.3/js/light7.js"></script>
+<script src="assets\js\jquery.sha256.js"></script>
+<script src="assets\js\jquery.cookie.js"></script>
 <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 <link rel="shortcut icon" href="//static.hdslb.com/images/favicon.ico">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <script>
+        function Login()
+        {
+             password = $("#password_input").val();
+             mail = $("#email_input").val();
+             $.post("https://private-anon-9c4d28a6f9-lino2.apiary-mock.com/users/auth",{"authinfo":
+			 {
+				 "mail":mail,
+				 "hashedPassword":mail
+				 }
+             }, function (data, status) {
+				 //alert(status);
+                 if (status = 200) {
+                       $.cookie("Login_Success",$.sha256(new Date(),email,password),{path:'/'});
+                  window.location.href="index.html";
+                 }
+             })
+			//alert(username+" "+password);
+
+        }
+        </script>
+
 </head>
 
 <body class="tabbar-hidden">
@@ -34,9 +58,9 @@ crossorigin="anonymous"></script>
 			<div class="item-content">
 			  <div class="item-media"><i class="icon icon-form-name"></i></div>
 			  <div class="item-inner">
-				<div class="item-title label">用户名</div>
+				<div class="item-title label">邮箱地址</div>
 				<div class="item-input">
-				  <input type="text" placeholder="User Name">
+				  <input id="email_input"type="text" placeholder="Email">
 				</div>
 			  </div>
 			</div>
@@ -47,7 +71,7 @@ crossorigin="anonymous"></script>
 			  <div class="item-inner">
 				<div class="item-title label">密码</div>
 				<div class="item-input">
-				  <input type="password" placeholder="Password" class="">
+				  <input id="password_input" type="password" placeholder="Password" class="">
 				</div>
 			  </div>
 			</div>
@@ -57,7 +81,7 @@ crossorigin="anonymous"></script>
 	  <div class="content-block">
 		<div class="row">
 		  <div class="col-50"><a href="index.html#page-home" class="button button-big button-fill button-danger back">返回</a></div>
-		  <div class="col-50"><a href="#" class="button button-big button-fill button-success">登录</a></div>
+		  <div class="col-50"><a href="#" class="button button-big button-fill button-success" onclick="Login()" >登录</a></div>
 		</div>
 	  </div>
 	</div>
