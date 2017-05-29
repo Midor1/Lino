@@ -24,9 +24,10 @@ crossorigin="anonymous"></script>
     <script>
         function Login()
         {
+        	var serverurl = "https://private-anon-ddbdef4939-lino2.apiary-mock.com";
              password = $("#password_input").val();
              mail = $("#email_input").val();
-             $.post("https://private-anon-9c4d28a6f9-lino2.apiary-mock.com/users/auth",{"authinfo":
+             $.post(serverurl+"/users/auth",{"authinfo":
 			 {
 				 "mail":mail,
 				 "hashedPassword":mail
@@ -34,7 +35,12 @@ crossorigin="anonymous"></script>
              }, function (data, status) {
 				 //alert(status);
                  if (status = 200) {
-                       $.cookie("Login_Success",$.sha256(new Date(),email,password),{path:'/'});
+                       $.cookie("Login_Success",$.sha256(new Date().getUTCMilliseconds(),mail,password),{path:'/'});
+                       $.getJSON(serverurl+"/users/me",function(data,status)
+    		{
+    			//alert(data.user.uid);
+            			localStorage.uid = data.user.uid;
+    		});
                   window.location.href="index.html";
                  }
              })

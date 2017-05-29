@@ -8,12 +8,15 @@
 var serverurl = "https://private-anon-ddbdef4939-lino2.apiary-mock.com";
 $(document).ready(function ()
 {
+    // if($.cookie("Login_Success")==null)
+    //TODO:记得改回来...现在是为了方便调试.....	
      if($.cookie("Login_Success")!=null){
          $.alert('登录失效,请重新登录', '遇到问题辣%>_<%!', function () {
             window.location.href="Login.html";
         });
     };
     $.showPreloader("请稍等一下下%>_<%\n点击可以关闭我哦");
+    alert(localStorage.uid);
 
 });
 Vue.component('live_item',{
@@ -117,7 +120,7 @@ var PersonalPageLiveList = new Vue(
         },
         Init:function()
         {
-        	$.getJSON(serverurl+"/lives?host=me&upcoming=0&from=0",
+        	$.getJSON(serverurl+"/lives?host="+localStorage.uid+"&upcoming=0&from=0",
         		function(data,status)
         		{
         			//alert(data.lives[0].name);

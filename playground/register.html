@@ -52,8 +52,9 @@ crossorigin="anonymous"></script>
            {
                if (status = 200)
                {
-                  $.cookie("Login_Success",$.sha256(new Date(),email,password),{path:'/'});
-                  window.location.href="index.html";
+                  $.alert("注册成功！接下来进入登录页面","恭喜");
+                  //$.cookie("Login_Success",$.sha256(new Date(),email,password),{path:'/'});
+                  window.location.href="login.html";
                }
             });
        }
