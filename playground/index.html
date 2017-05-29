@@ -21,7 +21,8 @@ crossorigin="anonymous"></script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="Access-Control-Allow-Origin" content="*">
-
+<script src="assets\js\jquery.sha256.js"></script>
+<script src="assets\js\jquery.cookie.js"></script>
 </head>
 
 <body> 
@@ -50,9 +51,13 @@ crossorigin="anonymous"></script>
     </a>
     <h1 class="title">水木书荟</h1>
   </header>
-  <div class="content">
-	<div class="content-block" id="Live_List">
-	<live_item v-for="(item,index) in Live_Item_List" v-bind:index="index" v-bind:Live="item" @click.native="OnListItemClick(index)"></Live_Item>
+  <div class="content pull-to-refresh-content">
+       <div class="pull-to-refresh-layer">
+    <div class="preloader"></div>
+    <div class="pull-to-refresh-arrow"></div>
+     </div>
+	<div class="content-block" id="Live_List" > 
+	<live_item v-for="(item,index) in Live_Item_List" :key="index" v-bind:index="index" v-bind:Live="item" @click.native="OnListItemClick(index)"></Live_Item>
 	</div>
   </div>
 </div>
@@ -63,16 +68,17 @@ crossorigin="anonymous"></script>
     </a>
     <h1 class="title">个人</h1>
   </header>
-  <div class="content">
+  <div class="content" >
     <div class="page-settings">
-      <div class="list-block media-list person-card">
+    <div id = "PersonalPageStatus">
+      <div class="list-block media-list person-card" >
         <ul>
           <li>
             <div href="#" class="item-content">
               <div class="item-media"><img src="http://main-pics.oss-cn-hangzhou.aliyuncs.com/hcj.jpg" width="80"></div>
               <div class="item-inner">
                 <div class="item-title-row">
-                  <div class="item-title">Midor</div>
+                  <div class="item-title">{{nickname}}</div>
                 </div>
                 <div class="item-subtitle">这是我的签名</div>
               </div>
@@ -80,44 +86,35 @@ crossorigin="anonymous"></script>
           </li>
         </ul>
       </div>
-      <div class="row text-center">
+      <div class="row text-center" >
         <div class="col-33">
-          <h4>？</h4>
+          <h4>{{focus}}</h4>
           <div class="color-gray">关注</div>
         </div>
         <div class="col-33">
-          <h4>？</h4>
+          <h4>{{fans}}</h4>
           <div class="color-gray">粉丝</div>
         </div>
         <div class="col-33">
-          <h4>2</h4>
+          <h4>{{LiveAmount}}</h4>
           <div class="color-gray">直播</div>
         </div>
+      </div>
       </div>
       <div class="list-block list">
         <ul>
           <li class="item-content item-link">
             <div class="item-media"><i class="icon icon-me"></i></div>
-            <div class="item-inner">
-              <div class="item-title">个人信息配置</div>
+            <div class="item-inner open-popup" id="open-personalconfig" >
+              <div class="item-title  " @click.native="PopupPersonalConfig()">个人信息配置</div>
             </div>
           </li>
         </ul>
       </div>
-      <div class="content-block-title">为你推荐的内容</div>
-	  <div class="card facebook-card">
-		<div class="card-header no-border">
-		  <div class="facebook-avatar"><img src="http://main-pics.oss-cn-hangzhou.aliyuncs.com/pic-img2.png" width="34" height="34"></div>
-		  <div class="facebook-name">主播：丁一</div>
-		  <div class="facebook-date">星期日 1:23am</div>
-		</div>
-		<div class="card-content"><img src="http://main-pics.oss-cn-hangzhou.aliyuncs.com/hololens_2.jpg" width="100%"></div>
-		<div class="card-footer no-border">
-		  <a href="#" class="link">赞</a>
-		  <a href="#" class="link">评论</a>
-		  <a href="#" class="link"><span class="icon icon-share"></span>&nbsp;分享</a>
-		</div>
-	  </div>
+      <div class="content-block-title">往期图文直播</div>
+	  <div class="content-block" id="PersonalPage_Live_List" > 
+            <live_item v-for="(item,index) in Live_Item_List" :key="index" v-bind:index="index" v-bind:Live="item" @click.native="OnListItemClick(item)"></Live_Item>
+        </div>
     </div>
   </div>
 </div>
@@ -222,6 +219,113 @@ crossorigin="anonymous"></script>
 	<!-- .... -->
   </div>
 </div>
-<script src=".\index.js"></script>
+<!-- popup part start-->
+<div class="popup popup-personalconfig">
+  <header class="bar bar-nav">
+  <h1 class='title'>个人设置</h1>
+</header>
+<div class="content">
+  <div class="list-block">
+    <ul>
+      <!-- Text inputs -->
+      <li>
+        <div class="item-content">
+          <div class="item-media"><i class="icon icon-form-name"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">昵称</div>
+            <div class="item-input">
+              <input type="text" placeholder="Your name">
+            </div>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="item-content">
+          <div class="item-media"><i class="icon icon-form-email"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">邮箱地址</div>
+            <div class="item-input">
+              <input type="email" placeholder="E-mail">
+            </div>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="item-content">
+          <div class="item-media"><i class="icon icon-form-password"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">密码</div>
+            <div class="item-input">
+              <input type="password" placeholder="Password" class="">
+            </div>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="item-content">
+          <div class="item-media"><i class="icon icon-form-gender"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">性别</div>
+            <div class="item-input">
+              <select>
+                <option>男</option>
+                <option>女</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </li>
+      <!-- Date -->
+      <li>
+        <div class="item-content">
+          <div class="item-media"><i class="icon icon-form-calendar"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">生日</div>
+            <div class="item-input">
+              <input type="date" placeholder="Birth day" value="2014-04-30">
+            </div>
+          </div>
+        </div>
+      </li>
+      <!-- Switch (Checkbox) -->
+      <!--
+      <li>
+        <div class="item-content">
+          <div class="item-media"><i class="icon icon-form-toggle"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">Switch</div>
+            <div class="item-input">
+              <label class="label-switch">
+                <input type="checkbox">
+                <div class="checkbox"></div>
+              </label>
+            </div>
+          </div>
+        </div>
+      </li>-->
+      <li class="align-top">
+        <div class="item-content">
+          <div class="item-media"><i class="icon icon-form-comment"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">个人描述</div>
+            <div class="item-input">
+              <textarea></textarea>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div class="content-block">
+    <div class="row">
+      <div class="col-50"><a href="#" class="button button-big button-fill button-danger close-popup">取消</a></div>
+      <div class="col-50"><a href="#" class="button button-big button-fill button-success close-popup">提交</a></div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- popup part end-->
+<script src="assets\js\index.js"></script>
+
 </body>
 </html>
