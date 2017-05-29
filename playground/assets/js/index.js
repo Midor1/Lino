@@ -16,7 +16,7 @@ $(document).ready(function ()
         });
     };
     $.showPreloader("请稍等一下下%>_<%\n点击可以关闭我哦");
-    alert(localStorage.uid);
+    //alert(localStorage.uid);
 
 });
 Vue.component('live_item',{
@@ -216,6 +216,19 @@ var PersonalPage = new Vue
        	nickname:"Midor"
        }
 })
+var openPersonalConfig = new Vue(
+{
+  el:"#open-personalconfig",
+  methods:
+  {
+  	PopupPersonalConfig:function()
+  	{
+  		alert("Hello!");
+  		$.popup('.popup-personalconfig');
+  	}
+  }
+}
+)
 
 
 
