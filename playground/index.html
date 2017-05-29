@@ -50,9 +50,13 @@ crossorigin="anonymous"></script>
     </a>
     <h1 class="title">水木书荟</h1>
   </header>
-  <div class="content">
-	<div class="content-block" id="Live_List">
-	<live_item v-for="(item,index) in Live_Item_List" v-bind:index="index" v-bind:Live="item" @click.native="OnListItemClick(index)"></Live_Item>
+  <div class="content pull-to-refresh-content">
+       <div class="pull-to-refresh-layer">
+    <div class="preloader"></div>
+    <div class="pull-to-refresh-arrow"></div>
+     </div>
+	<div class="content-block" id="Live_List" > 
+	<live_item v-for="(item,index) in Live_Item_List" :key="index" v-bind:index="index" v-bind:Live="item" @click.native="OnListItemClick(index)"></Live_Item>
 	</div>
   </div>
 </div>
@@ -222,6 +226,7 @@ crossorigin="anonymous"></script>
 	<!-- .... -->
   </div>
 </div>
-<script src=".\index.js"></script>
+<script src="assets\js\index.js"></script>
+
 </body>
 </html>
