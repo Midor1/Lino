@@ -5,7 +5,9 @@
 	}
 });*/
 /*jshint multistr: true */
+//TODO: change serverurl and hide it during deployment
 var serverurl = "https://private-anon-ddbdef4939-lino2.apiary-mock.com";
+
 $(document).ready(function ()
 {
     // if($.cookie("Login_Success")==null)
@@ -15,6 +17,7 @@ $(document).ready(function ()
             window.location.href="Login.html";
         });
     };
+    if (LiveList==null || LiveList.$data.Live_Item_List.length == 0)
     $.showPreloader("请稍等一下下%>_<%\n点击可以关闭我哦");
     //alert(localStorage.uid);
 
@@ -65,7 +68,7 @@ var LiveList = new Vue(
     {
         OnListItemClick:function(item)
         {
-            alert("WTF");
+            //alert("WTF");
             window.location.href=item.href;
         },
         Init:function()
@@ -136,7 +139,7 @@ var PersonalPageLiveList = new Vue(
     	                               	coverpath:"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1496073561214&di=b31cb40ac5e96a0169d6a21a86e1cd83&imgtype=0&src=http%3A%2F%2Fngnews.7xz.com%2Fuploadfile%2F2016%2F0629%2F20160629092602704.jpg",
     	                               	//coverpath:getCover(item.cover),
     	                               	likeamount:serverurl+"/lives/"+item.lid+"/like",
-    	                               	href:""
+    	                               	href:""//TODO: BIND Concrete live href
     	                               }
     	                          );
         			  });
@@ -210,10 +213,12 @@ var PersonalPage = new Vue
      el:"#PersonalPageStatus",
      data:
        {
+       	//TODO : databind（wait for backend interface）
        	focus:2,
        	fans:2,
        	LiveAmount:2,
-       	nickname:"Midor"
+       	nickname:"Midor",
+       	personalDescription:"a BUAA dalao!"
        }
 })
 var openPersonalConfig = new Vue(
@@ -223,7 +228,7 @@ var openPersonalConfig = new Vue(
   {
   	PopupPersonalConfig:function()
   	{
-  		alert("Hello!");
+  		//alert("Hello!");
   		$.popup('.popup-personalconfig');
   	}
   }
