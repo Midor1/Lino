@@ -22,28 +22,38 @@ crossorigin="anonymous"></script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <script>
+        var serverurl = "https://private-anon-ddbdef4939-lino2.apiary-mock.com";
         function Login()
         {
-        	var serverurl = "https://private-anon-ddbdef4939-lino2.apiary-mock.com";
+        	
              password = $("#password_input").val();
              mail = $("#email_input").val();
-             $.post(serverurl+"/users/auth",{"authinfo":
+             $.ajax(
+             	{type:'POST',
+             	xhrFields: 
+             	{
+      		    withCredentials: true
+ 	    	},
+             	url: serverurl+"/users/auth",
+             	data:{"authinfo":
 			 {
-				 "mail":mail,
-				 "hashedPassword":mail
-				 }
-             }, function (data, status) {
-				 //alert(status);
-                 if (status = 200) {
-                       $.cookie("Login_Success",$.sha256(new Date().getUTCMilliseconds(),mail,password),{path:'/'});
-                       $.getJSON(serverurl+"/users/me",function(data,status)
-    		{
+			    "mail":mail,
+		                 "hashedPassword":$.sha256(email,password,"Lino")
+		             }
+		         },
+                         success:function (data, status)
+                          {
+                       	       $.getJSON(serverurl+"/users/me",
+                       	       function(data,status)
+    		       {
     			//alert(data.user.uid);
             			localStorage.uid = data.user.uid;
-    		});
-                  window.location.href="index.html";
-                 }
-             })
+    		       }
+    		       );
+                              window.location.href="index.html";
+                          }
+                      }
+             );
 			//alert(username+" "+password);
 
         }

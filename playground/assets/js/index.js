@@ -73,10 +73,15 @@ var LiveList = new Vue(
         },
         Init:function()
         {
-        	$.getJSON(serverurl+"/lives?host=0&upcoming=1&from=0",
-        		function(data,status)
+        	$.ajax(
+                 {type:'GET', 
+        	    url:serverurl+"/lives?host=0&upcoming=1&from=0",
+        	     xhrFields: {
+                        withCredentials: true
+                    },
+                    datatype:"json",
+        	    success:function(data,status)
         		{
-        			//alert(data.lives[0].name);
         			$.each(data.lives,function(index,item)
     	                            {
     	                            	
@@ -95,7 +100,9 @@ var LiveList = new Vue(
         			  });
         			LiveList.$data.latest = data.lives.length;
         			$.hidePreloader();
-        		})
+        		}
+            }
+                );
         }
     },
     created:function()
@@ -118,34 +125,42 @@ var PersonalPageLiveList = new Vue(
     {
         OnListItemClick:function(item)
         {
-            alert("WTF");
+            //alert("WTF");
             window.location.href=item.href;
         },
         Init:function()
         {
-        	$.getJSON(serverurl+"/lives?host="+localStorage.uid+"&upcoming=0&from=0",
-        		function(data,status)
-        		{
-        			//alert(data.lives[0].name);
-        			$.each(data.lives,function(index,item)
-    	                            {
-    	                            	
+        	$.ajax(
+                 {
+                type:'GET', 
+                url:serverurl+"/lives?host="+localStorage.uid+"&upcoming=0&from=0",
+                 xhrFields: {
+                        withCredentials: true
+                    },
+                    datatype:"json",
+                success:function(data,status)
+                {
+                    $.each(data.lives,function(index,item)
+                                    {
+                                        
                                         PersonalPageLiveList.$data.Live_Item_List.push(
-    	                               {
-    	                               	title:item.name,
-    	                               	begin_time:new Date(item.begin_time).toLocaleString(),
-    	                               	description:item.description,
-    	                               	last_time:formatSeconds(item.time_lasted),
-    	                               	coverpath:"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1496073561214&di=b31cb40ac5e96a0169d6a21a86e1cd83&imgtype=0&src=http%3A%2F%2Fngnews.7xz.com%2Fuploadfile%2F2016%2F0629%2F20160629092602704.jpg",
-    	                               	//coverpath:getCover(item.cover),
-    	                               	likeamount:serverurl+"/lives/"+item.lid+"/like",
-    	                               	href:""//TODO: BIND Concrete live href
-    	                               }
-    	                          );
-        			  });
-        			PersonalPageLiveList.$data.latest = data.lives.length;
-        			//$.hidePreloader();
-        		})
+                                       {
+                                        title:item.name,
+                                        begin_time:new Date(item.begin_time).toLocaleString(),
+                                        description:item.description,
+                                        last_time:formatSeconds(item.time_lasted),
+                                        coverpath:"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1496073561214&di=b31cb40ac5e96a0169d6a21a86e1cd83&imgtype=0&src=http%3A%2F%2Fngnews.7xz.com%2Fuploadfile%2F2016%2F0629%2F20160629092602704.jpg",
+                                        //coverpath:getCover(item.cover),
+                                        likeamount:serverurl+"/lives/"+item.lid+"/like",
+                                        href:""
+                                       }
+                                  );
+                      });
+                    PersonalPageLiveList.$data.latest = data.lives.length;
+                    $.hidePreloader();
+                }
+            }
+                );
         }
     },
     created:function()
