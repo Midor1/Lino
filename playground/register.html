@@ -30,9 +30,16 @@ crossorigin="anonymous"></script>
        username = $("#register_username_input").val();
        email = $("#register_email_input").val();
        //alert($.sha256(email,password,"Lino"));
+       var matcher  = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/; 
+       if (!matcher.test(email))
+       {
+       	$.alert("邮箱格式错误")；
+       	return ;
+       }
        if (password != password)
        {
-	   $.alert("两次输入密码不一致","错误")；
+	   $.alert("两次输入密码不一致")；
+	   return ;
        }
        else
        {

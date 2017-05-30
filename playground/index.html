@@ -57,7 +57,7 @@ crossorigin="anonymous"></script>
     <div class="pull-to-refresh-arrow"></div>
      </div>
 	<div class="content-block" id="Live_List" > 
-	<live_item v-for="(item,index) in Live_Item_List" :key="index" v-bind:index="index" v-bind:Live="item" @click.native="OnListItemClick(index)"></Live_Item>
+	<live_item v-for="(item,index) in Live_Item_List" :key="index" v-bind:index="index" v-bind:Live="item" @click.native="OnListItemClick(item)"></Live_Item>
 	</div>
   </div>
 </div>
@@ -129,11 +129,14 @@ crossorigin="anonymous"></script>
     <div class="searchbar">
       <a class="searchbar-cancel">取消</a>
       <div class="search-input">
-        <label class="icon icon-search" for="search"></label>
+        <label class="icon icon-search" for="search" onclick="startSearch()"></label>
         <input type="search" id="search" placeholder="输入一个房间号或主播..."/>
       </div>
     </div>
   </div>
+  <div class="content-block" id="Search_Live_List" > 
+            <live_item v-for="(item,index) in Live_Item_List" :key="index" v-bind:index="index" v-bind:Live="item" @click.native="OnListItemClick(item)"></Live_Item>
+        </div>+
 </div>
 <div id="page-settings" class="page page-settings">
   <header class="bar bar-nav">
@@ -234,12 +237,12 @@ crossorigin="anonymous"></script>
           <div class="item-inner">
             <div class="item-title label">昵称</div>
             <div class="item-input">
-              <input type="text" placeholder="Your name">
+              <input type="text" placeholder="Your name here" id ="newnickname">
             </div>
           </div>
         </div>
       </li>
-      <li>
+     <!--  <li>
         <div class="item-content">
           <div class="item-media"><i class="icon icon-form-email"></i></div>
           <div class="item-inner">
@@ -249,14 +252,25 @@ crossorigin="anonymous"></script>
             </div>
           </div>
         </div>
-      </li>
+      </li> -->
       <li>
         <div class="item-content">
           <div class="item-media"><i class="icon icon-form-password"></i></div>
           <div class="item-inner">
             <div class="item-title label">密码</div>
             <div class="item-input">
-              <input type="password" placeholder="Password" class="">
+              <input type="password" id ="modify_password" placeholder="Password" class="">
+            </div>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="item-content">
+          <div class="item-media"><i class="icon icon-form-password"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">确认密码</div>
+            <div class="item-input">
+              <input type="password" id ="modify_password_again" placeholder="Password" class="">
             </div>
           </div>
         </div>
@@ -276,7 +290,7 @@ crossorigin="anonymous"></script>
         </div>
       </li>
       <!-- Date -->
-      <li>
+      <!-- <li>
         <div class="item-content">
           <div class="item-media"><i class="icon icon-form-calendar"></i></div>
           <div class="item-inner">
@@ -286,7 +300,7 @@ crossorigin="anonymous"></script>
             </div>
           </div>
         </div>
-      </li>
+      </li> -->
       <!-- Switch (Checkbox) -->
       <!--
       <li>
@@ -309,7 +323,7 @@ crossorigin="anonymous"></script>
           <div class="item-inner">
             <div class="item-title label">个人描述</div>
             <div class="item-input">
-              <textarea></textarea>
+              <textarea id ="description"></textarea>
             </div>
           </div>
         </div>
@@ -319,7 +333,7 @@ crossorigin="anonymous"></script>
   <div class="content-block">
     <div class="row">
       <div class="col-50"><a href="#" class="button button-big button-fill button-danger close-popup">取消</a></div>
-      <div class="col-50"><a href="#" class="button button-big button-fill button-success close-popup">提交</a></div>
+      <div class="col-50"><a href="#" class="button button-big button-fill button-success close-popup" onclick="submitPersonalInfoChange()">提交</a></div>
     </div>
   </div>
 </div>

@@ -169,6 +169,17 @@ var PersonalPageLiveList = new Vue(
 
     }
 })
+var SearchLiveList = new Vue(
+{
+    el: '#Search_Live_List',
+    data:
+    {
+        Live_Item_List:[    
+        ],
+        latest:0,
+        
+    }
+})
 
 function Update() {
 	LiveList.$data.Live_Item_List = [
@@ -249,6 +260,86 @@ var openPersonalConfig = new Vue(
   }
 }
 )
+function submitPersonalInfoChange()
+{
+    newnickname = $("#newnickname").val();
+    description = $("#description").val();
+    password=$("#modify_password").val();
+    password_again=$("#modify_password_again").val();
+    if (password !=password_again)
+    {
+        $.alert("两次输入的密码不一致！");
+        return;
+    }
+    else
+    {
+    $.ajax(
+      {
+        url:serverurl+"/users/me",
+        type:'PUT',
+        data:
+        {
+            "user":
+            {
+                "uid":localStorage.uid,
+                "nickname":newnickname,
+                "others":
+                {
+                    "description":description
+                }
+            },
+            "password":password
+        }
+        xhrFields:
+        {
+            withCredentials:true;
+        }
+        success:function(data,status)
+        {
+            $.alert("修改成功");
+        }
+      }
+        );
+    }
+
+}
+function startSearch()
+{
+    uid = $("#search").val();
+        $.ajax(
+      {
+        url:serverurl+"/live?host="+uid+"&upcoming=0&from=0",
+        type:'GET',
+        xhrFields:
+        {
+            withCredentials:true;
+        }
+        success:function(data,status)
+        {
+            a = JSON.parse(data);
+            list = a.lives;
+            $.each(data.lives,function(index,item)
+                                    {
+                                        
+                                        SearchLiveList.$data.Live_Item_List.push(
+                                       {
+                                        title:item.name,
+                                        begin_time:new Date(item.begin_time).toLocaleString(),
+                                        description:item.description,
+                                        last_time:formatSeconds(item.time_lasted),
+                                        coverpath:"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1496073561214&di=b31cb40ac5e96a0169d6a21a86e1cd83&imgtype=0&src=http%3A%2F%2Fngnews.7xz.com%2Fuploadfile%2F2016%2F0629%2F20160629092602704.jpg",
+                                        //coverpath:getCover(item.cover),
+                                        likeamount:serverurl+"/lives/"+item.lid+"/like",
+                                        href:""
+                                       }
+                                  );
+                                  });
+            SearchLiveList.$data.latest = data.lives.length;
+
+        }
+      }
+        );
+}
 
 
 
