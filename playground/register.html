@@ -33,12 +33,12 @@ crossorigin="anonymous"></script>
        var matcher  = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/; 
        if (!matcher.test(email))
        {
-       	$.alert("邮箱格式错误")；
+       	$.alert("邮箱格式错误");
        	return ;
        }
-       if (password != password)
+       if (password != password_again)
        {
-	   $.alert("两次输入密码不一致")；
+	   $.alert("两次输入密码不一致");
 	   return ;
        }
        else
@@ -47,7 +47,7 @@ crossorigin="anonymous"></script>
            	 {xhrFields: {
                  withCredentials: true
              },
-             type='POST',
+             type:'POST',
              url:serverurl+"/users", 
              data:
             {

@@ -289,11 +289,11 @@ function submitPersonalInfoChange()
                 }
             },
             "password":$.sha256(localStorage.mail,password,"Lino")
-        }
+        },
         xhrFields:
         {
-            withCredentials:true;
-        }
+            withCredentials:true
+        },
         success:function(data,status)
         {
             $.alert("修改成功");
@@ -312,8 +312,8 @@ function startSearch()
         type:'GET',
         xhrFields:
         {
-            withCredentials:true;
-        }
+            withCredentials:true
+        },
         success:function(data,status)
         {
             a = JSON.parse(data);
