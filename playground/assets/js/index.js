@@ -6,7 +6,7 @@
 });*/
 /*jshint multistr: true */
 //TODO: change serverurl and hide it during deployment
-var serverurl = "https://private-anon-ddbdef4939-lino2.apiary-mock.com";
+var serverurl = "q.aureliano.cc:4567";
 
 $(document).ready(function ()
 {
@@ -288,7 +288,7 @@ function submitPersonalInfoChange()
                     "description":description
                 }
             },
-            "password":password
+            "password":$.sha256(localStorage.mail,password,"Lino")
         }
         xhrFields:
         {

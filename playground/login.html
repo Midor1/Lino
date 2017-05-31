@@ -22,7 +22,7 @@ crossorigin="anonymous"></script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <script>
-        var serverurl = "https://private-anon-ddbdef4939-lino2.apiary-mock.com";
+        var serverurl = "q.aureliano.cc:4567";
         function Login()
         {
         	
@@ -38,18 +38,26 @@ crossorigin="anonymous"></script>
              	data:{"authinfo":
 			 {
 			    "mail":mail,
-		                 "hashedPassword":$.sha256(email,password,"Lino")
+		                 "hashedPassword":$.sha256(mail,password,"Lino")
 		             }
 		         },
                          success:function (data, status)
                           {
-                       	       $.getJSON(serverurl+"/users/me",
-                       	       function(data,status)
+                       	       $.ajax(
+                       	       {
+                       	       type:"GET",
+                       	       xhrFields: 
+             	       {
+      		    	withCredentials: true
+ 	    	       },
+ 	    	       datatype:"json",
+                       	       url:	serverurl+"/users/me",
+                       	       success:function(data,status)
     		       {
     			//alert(data.user.uid);
             			localStorage.uid = data.user.uid;
-            			
-    		       }
+            			localStorage.mail=mail;
+    		       }}
     		       );
                               window.location.href="index.html";
                           }
