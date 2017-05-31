@@ -6,7 +6,7 @@
 });*/
 /*jshint multistr: true */
 //TODO: change serverurl and hide it during deployment
-var serverurl = "q.aureliano.cc:4567";
+var serverurl = "http://q.aureliano.cc:4567";
 
 $(document).ready(function ()
 {

@@ -22,7 +22,7 @@ crossorigin="anonymous"></script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <script>
-        var serverurl = "q.aureliano.cc:4567";
+        var serverurl = "http://q.aureliano.cc:4567";
         function Login()
         {
         	
@@ -55,9 +55,15 @@ crossorigin="anonymous"></script>
                        	       success:function(data,status)
     		       {
     			//alert(data.user.uid);
+
             			localStorage.uid = data.user.uid;
             			localStorage.mail=mail;
-    		       }}
+    		       }
+    		       error:function(XMLHttpRequest, textStatus, errorThrown)
+    		       {
+    		       	$.alert(textStatus);
+    		       }
+    		   }
     		       );
                               window.location.href="index.html";
                           }
