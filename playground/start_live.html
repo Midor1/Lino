@@ -1,0 +1,110 @@
+﻿<!doctype html>
+<html class="pixel-ratio-1">
+<head>
+<meta charset="utf-8">
+<title>水木书荟</title>
+<script src="https://code.jquery.com/jquery-3.2.1.js"
+  integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+  crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
+integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
+crossorigin="anonymous"></script>
+<link href="https://cdn.bootcss.com/light7/0.4.3/css/light7-swipeout.css" rel="stylesheet">
+<link href="https://cdn.bootcss.com/light7/0.4.3/css/light7-swiper.css" rel="stylesheet">
+<link href="https://cdn.bootcss.com/light7/0.4.3/css/light7.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/light7/0.4.3/js/light7-swipeout.js"></script>
+<script src="https://cdn.bootcss.com/light7/0.4.3/js/light7-swiper.js"></script>
+<script src="https://cdn.bootcss.com/light7/0.4.3/js/light7.js"></script>
+<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+<link rel="shortcut icon" href="//static.hdslb.com/images/favicon.ico">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="Access-Control-Allow-Origin" content="*">
+</head>
+<body> 
+<header class="bar bar-nav">
+  <h1 class="title">创建直播</h1>
+</header>
+<div class="content">
+  <div class="card">
+    <div class="card-content">
+      <div class="list-block">
+        <ul>
+      	<li class="item-content">
+        <div class="item-media"><i class="icon icon-form-name"></i></div>
+        <div class="item-inner">
+          <div class="item-title label">直播间名称</div>
+          <div class="item-input">
+              <input id="name" style="text-align: right;" type="text" placeholder="在这里填写名称">
+          </div>
+        </div>
+		</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+  <div class="list-block">
+    <ul>
+      <li class="item-content item-link">
+        <div class="item-media"><i class="icon icon-form-toggle"></i></div>
+        <div class="item-inner">
+          <div class="item-title label">直播类型</div>
+          <div class="item-input">
+                  <select style="direction: rtl" id="type">
+                      <option style="direction: ltr">教育</option>
+                      <option style="direction: ltr">其他</option>
+                  </select>
+          </div>
+        </div>
+      </li>
+      <li class="item-content item-link">
+        <div class="item-media"><i class="icon icon-form-calendar"></i></div>
+        <div class="item-inner">
+          <div class="item-title label">开始时间</div>
+          <div class=item-after>
+		  <div class="item-input">
+		  	<input type="text" style="text-align: right;" id='datetime-picker'/>
+			<script>
+			$("#datetime-picker").datetimePicker({
+				toolbarTemplate: '\
+				<header class="bar bar-nav">\
+                  <button class="button button-link pull-right close-picker">确定</button>\
+                  <h1 class="title">选择日期和时间</h1>\
+				</header>'
+  				});
+			</script>
+		  </div>
+		  </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+  </div>
+  <div class="card">
+    <div class="card-header">直播间简介</div>
+    <div class="card-content">
+      <div class="list-block media-list">
+        <ul>
+          <li class="align-top">
+              <div class="item-content">
+                  <div class="item-media"><i class="icon icon-form-comment"></i></div>
+                  <div class="item-inner">
+                      <div class="item-input">
+                          <textarea id="description" placeholder="在这里输入简介"></textarea>
+                      </div>
+                  </div>
+              </div>
+          </li>
+        </ul>
+      </div>
+	</div>
+	<div style="height: 80px"></div>
+  </div>
+    <div class="card">
+      <div class="col-50" onclick="createLive()"><a href="#" class="button button-big button-fill button-success">创建直播</a></div>
+    </div>
+</div>
+<script src="assets/js/start_live.js"></script>
+</body>
+</html>
