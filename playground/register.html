@@ -22,41 +22,69 @@ crossorigin="anonymous"></script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <script>
+   var serverurl = "http://q.aureliano.cc:4567";
    function Register()
    {
-	   password = $("#register_password_input").val();
-	   password_again = $("#register_password_again_input").val();
-	   username = $("#register_username_input").val();
+       password = $("#register_password_input").val();
+       password_again = $("#register_password_again_input").val(); 
+       username = $("#register_username_input").val();
        email = $("#register_email_input").val();
-       alert($.sha256(email,password,"Lino"));
-       if (password != password)
-	   {
-	   }
+       //alert($.sha256(email,password,"Lino"));
+       var matcher  = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/; 
+       if (!matcher.test(email))
+       {
+       	$.alert("邮箱格式错误");
+       	return ;
+       }
+       if (password != password_again)
+       {
+	   $.alert("两次输入密码不一致");
+	   return ;
+       }
        else
        {
-           $.post("https://private-anon-9c4d28a6f9-lino2.apiary-mock.com/users", {
+           $.ajax(
+           	 {xhrFields: {
+                 withCredentials: true
+             },
+             type:'POST',
+             url:serverurl+"/users", 
+             data: JSON.stringify({
                "user":
                {
                    
-                   "others":"",
-                   "nickname": username
-                   
+                   "others":{
+                   	"sex":$("#sex_selection").val(),
+                   	"description":$("#register_description").val()
+                   },
+                   "nickname": username,
+                   "uid":123
                },
                "authinfo":
                {
                    "mail": email,
-                   "hashedPassword":$.sha256(email,password,"Lino")
+                   "hashedPassword":$.sha256(email+password+"Lino")
                }
 
-           }, function (data, status) 
+           }),
+           success:function (data, status) 
            {
-               if (status = 200)
-               {
+           	     if (status=200)
+           	     {
                   $.alert("注册成功！接下来进入登录页面","恭喜");
                   //$.cookie("Login_Success",$.sha256(new Date(),email,password),{path:'/'});
                   window.location.href="login.html";
-               }
-            });
+              } 
+                 
+              
+            },
+            error:function(XMLHttpRequest, textStatus, errorThrown)
+            {
+            	         if (XMLHttpRequest.status=500)
+            	         $.alert("邮箱已经被使用过!");
+             }
+            }
+            );
        }
    }
 </script>
@@ -108,7 +136,7 @@ crossorigin="anonymous"></script>
 			<div class="item-content">
 			  <div class="item-media"><i class="icon icon-form-password"></i></div>
 			  <div class="item-inner">
-				<div class="item-title label">密码again~</div>
+				<div class="item-title label">确认密码</div>
 				<div class="item-input">
 				  <input id="register_password_again_input" type="password" placeholder="Password" class="">
 				</div>
@@ -121,7 +149,7 @@ crossorigin="anonymous"></script>
 			  <div class="item-inner">
 				<div class="item-title label">性别</div>
 				<div class="item-input">
-				  <select>
+				  <select id="sex_selection">
 					<option>Male</option>
 					<option>Female</option>
 					<option>Unknown</option>
@@ -130,6 +158,17 @@ crossorigin="anonymous"></script>
 			  </div>
 			</div>
 		  </li>
+		  <li class="align-top">
+        <div class="item-content">
+          <div class="item-media"><i class="icon icon-form-comment"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">个人描述</div>
+            <div class="item-input">
+              <textarea id ="register_description"></textarea>
+            </div>
+          </div>
+        </div>
+      </li>
 		</ul>
 	  </div>
 	  <div class="content-block">

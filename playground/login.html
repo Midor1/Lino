@@ -22,28 +22,59 @@ crossorigin="anonymous"></script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <script>
+        var serverurl = "http://q.aureliano.cc:4567";
         function Login()
         {
-        	var serverurl = "https://private-anon-ddbdef4939-lino2.apiary-mock.com";
+        	
              password = $("#password_input").val();
-             mail = $("#email_input").val();
-             $.post(serverurl+"/users/auth",{"authinfo":
+             email = $("#email_input").val();
+             $.ajax(
+             	{type:'POST',
+             	xhrFields: 
+             	{
+      		    withCredentials: true
+ 	    	},
+             	url: serverurl+"/users/auth",
+             	data:JSON.stringify({"authinfo":
 			 {
-				 "mail":mail,
-				 "hashedPassword":mail
-				 }
-             }, function (data, status) {
-				 //alert(status);
-                 if (status = 200) {
-                       $.cookie("Login_Success",$.sha256(new Date().getUTCMilliseconds(),mail,password),{path:'/'});
-                       $.getJSON(serverurl+"/users/me",function(data,status)
-    		{
+			    "mail":email,
+		                 "hashedPassword":$.sha256(email+password+"Lino")
+		             }
+		         }),
+                         success:function (data, status)
+                          {
+                       	       $.ajax(
+                       	       {
+                       	       type:"GET",
+                       	       xhrFields: 
+             	       {
+      		    	withCredentials: true
+ 	    	       },
+ 	    	       datatype:"json",
+                       	       url:	serverurl+"/users/me",
+                       	       success:function(data,status)
+    		       {
     			//alert(data.user.uid);
-            			localStorage.uid = data.user.uid;
-    		});
-                  window.location.href="index.html";
-                 }
-             })
+    			list =JSON.parse(data);
+                        if (status=200)
+                        {
+
+                        localStorage.uid = list.user.uid;
+            		localStorage.email=email;
+            		localStorage.password=password;
+            		localStorage.nickname = list.user.nickname;
+                        window.location.href="index.html";
+                        }
+                        else
+                          $.alert("登录失败！");
+    		       }
+    		      
+    		   }
+    		       );
+                              
+                          }
+                      }
+             );
 			//alert(username+" "+password);
 
         }

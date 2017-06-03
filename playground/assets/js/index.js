@@ -6,17 +6,17 @@
 });*/
 /*jshint multistr: true */
 //TODO: change serverurl and hide it during deployment
-var serverurl = "https://private-anon-ddbdef4939-lino2.apiary-mock.com";
+var serverurl = "http://q.aureliano.cc:4567";
 
 $(document).ready(function ()
 {
     // if($.cookie("Login_Success")==null)
     //TODO:记得改回来...现在是为了方便调试.....	
-     if($.cookie("Login_Success")!=null){
-         $.alert('登录失效,请重新登录', '遇到问题辣%>_<%!', function () {
-            window.location.href="Login.html";
-        });
-    };
+    //  if($.cookie("Login_Success")!=null){
+    //      $.alert('登录失效,请重新登录', '遇到问题辣%>_<%!', function () {
+    //         window.location.href="Login.html";
+    //     });
+    // };
     if (LiveList==null || LiveList.$data.Live_Item_List.length == 0)
     $.showPreloader("请稍等一下下%>_<%\n点击可以关闭我哦");
     //alert(localStorage.uid);
@@ -73,11 +73,17 @@ var LiveList = new Vue(
         },
         Init:function()
         {
-        	$.getJSON(serverurl+"/lives?host=0&upcoming=1&from=0",
-        		function(data,status)
+        	$.ajax(
+                 {type:'GET', 
+        	    url:serverurl+"/lives?host=0&upcoming=1&from=0",
+        	     xhrFields: {
+                        withCredentials: true
+                    },
+                    datatype:"json",
+        	    success:function(data,status)
         		{
-        			//alert(data.lives[0].name);
-        			$.each(data.lives,function(index,item)
+                                     result = JSON.parse(data);
+        			$.each(result.lives,function(index,item)
     	                            {
     	                            	
                                         LiveList.$data.Live_Item_List.push(
@@ -93,9 +99,11 @@ var LiveList = new Vue(
     	                               }
     	                          );
         			  });
-        			LiveList.$data.latest = data.lives.length;
+        			LiveList.$data.latest = result.lives.length;
         			$.hidePreloader();
-        		})
+        		}
+            }
+                );
         }
     },
     created:function()
@@ -118,34 +126,44 @@ var PersonalPageLiveList = new Vue(
     {
         OnListItemClick:function(item)
         {
-            alert("WTF");
+            //alert("WTF");
             window.location.href=item.href;
         },
         Init:function()
         {
-        	$.getJSON(serverurl+"/lives?host="+localStorage.uid+"&upcoming=0&from=0",
-        		function(data,status)
-        		{
-        			//alert(data.lives[0].name);
-        			$.each(data.lives,function(index,item)
-    	                            {
-    	                            	
+        	$.ajax(
+                 {
+                type:'GET', 
+                url:serverurl+"/lives?host="+localStorage.uid+"&upcoming=0&from=0",
+                 xhrFields: {
+                        withCredentials: true
+                    },
+                    datatype:"json",
+                success:function(data,status)
+                {
+                    result = JSON.parse(data);
+                    $.each(result.lives,function(index,item)
+                                    {
+                                        
                                         PersonalPageLiveList.$data.Live_Item_List.push(
-    	                               {
-    	                               	title:item.name,
-    	                               	begin_time:new Date(item.begin_time).toLocaleString(),
-    	                               	description:item.description,
-    	                               	last_time:formatSeconds(item.time_lasted),
-    	                               	coverpath:"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1496073561214&di=b31cb40ac5e96a0169d6a21a86e1cd83&imgtype=0&src=http%3A%2F%2Fngnews.7xz.com%2Fuploadfile%2F2016%2F0629%2F20160629092602704.jpg",
-    	                               	//coverpath:getCover(item.cover),
-    	                               	likeamount:serverurl+"/lives/"+item.lid+"/like",
-    	                               	href:""//TODO: BIND Concrete live href
-    	                               }
-    	                          );
-        			  });
-        			PersonalPageLiveList.$data.latest = data.lives.length;
-        			//$.hidePreloader();
-        		})
+                                       {
+                                        title:item.name,
+                                        begin_time:new Date(item.begin_time).toLocaleString(),
+                                        description:item.description,
+                                        last_time:formatSeconds(item.time_lasted),
+                                        coverpath:"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1496073561214&di=b31cb40ac5e96a0169d6a21a86e1cd83&imgtype=0&src=http%3A%2F%2Fngnews.7xz.com%2Fuploadfile%2F2016%2F0629%2F20160629092602704.jpg",
+                                        //coverpath:getCover(item.cover),
+                                        likeamount:serverurl+"/lives/"+item.lid+"/like",
+                                        href:""
+                                       }
+                                  );
+                      });
+                    PersonalPageLiveList.$data.latest = result.lives.length;
+                    
+                    $.hidePreloader();
+                }
+            }
+                );
         }
     },
     created:function()
@@ -154,23 +172,34 @@ var PersonalPageLiveList = new Vue(
 
     }
 })
+var SearchLiveList = new Vue(
+{
+    el: '#Search_Live_List',
+    data:
+    {
+        Live_Item_List:[    
+        ],
+        latest:0,
+        
+    }
+})
 
-function Update() {
-	LiveList.$data.Live_Item_List = [
-		{
-			title:"Lalala",
-			starttime:"2017/05/11 12:00:00",
-			content:"hh",
-			href:"http://www.baidu.com"
-		},
-		{
-			title:"MyGree",
-			starttime:"2017/05/11 12:00:00",
-			content:"hh",
-			href:"http://www.bilibili.com"
-		}
-	];
-}
+// function Update() {
+// 	LiveList.$data.Live_Item_List = [
+// 		{
+// 			title:"Lalala",
+// 			starttime:"2017/05/11 12:00:00",
+// 			content:"hh",
+// 			href:"http://www.baidu.com"
+// 		},
+// 		{
+// 			title:"MyGree",
+// 			starttime:"2017/05/11 12:00:00",
+// 			content:"hh",
+// 			href:"http://www.bilibili.com"
+// 		}
+// 	];
+// }
 function Like() {
 	//title_2.title='Thank you!';
 	alert('Thank you!');
@@ -217,23 +246,183 @@ var PersonalPage = new Vue
        	focus:2,
        	fans:2,
        	LiveAmount:2,
-       	nickname:"Midor",
-       	personalDescription:"a BUAA dalao!"
+       	nickname:"",
+       	personalDescription:"",
+             sex:""
+       },
+       methods:
+       {
+
+       },
+       created:function()
+       {
+              $.ajax(
+               {
+               type:"GET",
+               xhrFields: 
+                {
+                    withCredentials: true
+                },
+                   datatype:"json",
+                    url: serverurl+"/users/me",
+                   success:function(data,status)
+                   {
+                //alert(data.user.uid);
+                list =JSON.parse(data);
+                        if (status=200)
+                        {
+                                  localStorage.uid=list.user.uid;
+                                  localStorage.nickname=list.user.nickname;
+                                  PersonalPage.$data.nickname = list.user.nickname;
+                                  // alert(list.user.others);
+                                  // alert(JSON.stringify(list.user.others));
+                                  // alert(JSON.parse(list.user.others).sex);
+                                  others=list.user.others;
+
+                                  PersonalPage.$data.personalDescription=others.description;
+                                  PersonalPage.$data.sex=others.sex;
+                        }
+                        else
+                          $.alert("登录失败！");
+                   }
+                  
+               }
+                   );
        }
 })
-var openPersonalConfig = new Vue(
+
+var PersonalConfig = new Vue(
 {
-  el:"#open-personalconfig",
-  methods:
-  {
-  	PopupPersonalConfig:function()
-  	{
-  		//alert("Hello!");
-  		$.popup('.popup-personalconfig');
-  	}
-  }
+    el:"#popup-personalconfig",
+    data:
+    {
+           nickname:localStorage.nickname,
+           password:localStorage.password,
+           password_again:localStorage.password,
+           description:PersonalPage.$data.personalDescription,
+           sex:PersonalPage.$data.sex,
+    },
+    created:function()
+    {
+        // PersonalConfig.$data.nickname="123";
+        //$("#newnickname").val(nickname);
+        // alert(localStorage.nickname);
+        // alert(localStorage.password);
+
+                        // $("#newnickname").val(localStorage.nickname);
+                        // $("#newpassword").val(localStorage.password);
+                        //  $("#newpassword_again").val(localStorage.password);
+                        //  $("#newsex_selection").val(PersonalPage.$data.sex);
+                        //  $("#newdescription").val(PersonalPage.$data.personalDescription);
+    },
+    updated:function()
+    {
+       // PersonalConfig.$data.nickname="123";
+        // $("#newnickname").val(localStorage.nickname);
+        //                 $("#newpassword").val(localStorage.password);
+        //                  $("#newpassword_again").val(localStorage.password);
+        //                  $("#newsex_selection").val(PersonalPage.$data.sex);
+        //                  $("#newdescription").val(PersonalPage.$data.personalDescription);
+    },
+    mounted:function()
+    {
+        // PersonalConfig.$data.nickname="123";
+    }
+
 }
-)
+    )
+
+function submitPersonalInfoChange()
+{
+    newnickname = $("#newnickname").val();
+    description = $("#newdescription").val();
+    password=$("#newpassword").val();
+    password_again=$("#newpassword_again").val();
+    sex=$("#newsex_selection").val();
+
+    if (password !=password_again)
+    {
+        $.alert("两次输入的密码不一致！");
+        return;
+    }
+    else
+    {
+        alert(password);
+        // alert(password);
+         PersonalPage.$data.nickname=newnickname;
+         PersonalPage.$data.personalDescription=description;
+
+    $.ajax(
+      {
+        url:serverurl+"/users/"+localStorage.uid,
+        type:'PUT',
+        data:JSON.stringify(
+        {
+            "user":
+            {
+                "uid":localStorage.uid,
+                "nickname":newnickname,
+                "others":
+                {
+                    "description":description,
+                    "sex":sex
+                }
+            },
+            "password":$.sha256(localStorage.email+password+"Lino")
+        }),
+        xhrFields:
+        {
+            withCredentials:true
+        },
+        success:function(data,status)
+        {
+            $.alert("修改成功");
+            localStorage.password=password;
+            localStorage.nickname=nickname;
+        }
+      }
+        );
+    }
+
+}
+function startSearch()
+{
+    uid = $("#search").val();
+        $.ajax(
+      {
+        url:serverurl+"/lives?host="+uid+"&upcoming=0&from=0",
+        type:'GET',
+        xhrFields:
+        {
+            withCredentials:true
+        },
+        success:function(data,status)
+        {
+            a = JSON.parse(data);
+            list = a.lives;
+            result = JSON.parse(data);
+            $.each(result.lives,function(index,item)
+                                    {
+                                        
+                                        SearchLiveList.$data.Live_Item_List.push(
+                                       {
+                                        title:item.name,
+                                        begin_time:new Date(item.begin_time).toLocaleString(),
+                                        description:item.description,
+                                        last_time:formatSeconds(item.time_lasted),
+                                        coverpath:"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1496073561214&di=b31cb40ac5e96a0169d6a21a86e1cd83&imgtype=0&src=http%3A%2F%2Fngnews.7xz.com%2Fuploadfile%2F2016%2F0629%2F20160629092602704.jpg",
+                                        //coverpath:getCover(item.cover),
+                                        likeamount:serverurl+"/lives/"+item.lid+"/like",
+                                        href:""
+                                       }
+                                  );
+                                  });
+            SearchLiveList.$data.latest = result.lives.length;
+
+        }
+      }
+        );
+}
 
 
 

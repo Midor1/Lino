@@ -57,7 +57,7 @@ crossorigin="anonymous"></script>
     <div class="pull-to-refresh-arrow"></div>
      </div>
 	<div class="content-block" id="Live_List" > 
-	<live_item v-for="(item,index) in Live_Item_List" :key="index" v-bind:index="index" v-bind:Live="item" @click.native="OnListItemClick(index)"></Live_Item>
+	<live_item v-for="(item,index) in Live_Item_List" :key="index" v-bind:index="index" v-bind:Live="item" @click.native="OnListItemClick(item)"></Live_Item>
 	</div>
   </div>
 </div>
@@ -129,11 +129,14 @@ crossorigin="anonymous"></script>
     <div class="searchbar">
       <a class="searchbar-cancel">取消</a>
       <div class="search-input">
-        <label class="icon icon-search" for="search"></label>
+        <label class="icon icon-search" for="search" onclick="startSearch()"></label>
         <input type="search" id="search" placeholder="输入一个房间号或主播..."/>
       </div>
     </div>
   </div>
+  <div class="content-block" id="Search_Live_List" > 
+            <live_item v-for="(item,index) in Live_Item_List" :key="index" v-bind:index="index" v-bind:Live="item" @click.native="OnListItemClick(item)"></Live_Item>
+        </div>+
 </div>
 <div id="page-settings" class="page page-settings">
   <header class="bar bar-nav">
@@ -212,7 +215,7 @@ crossorigin="anonymous"></script>
 	<p>您尚未登录</p>
 	 <p><a href="login.html" class="color-primary close-panel close-nav">登录</a>以使用网站的完整功能</p>
 	 <p>还没有账号?点这里<a href="register.html" class="color-primary close-panel">注册</a>一个</p>
-	<p><a href="#" onclick="Update()">刷新</a></p>
+	<p><a href="#" >刷新</a></p>
 	<p><a href="#" class="close-panel">关闭</a></p>
   </div>
   <div class="list-block">
@@ -220,7 +223,7 @@ crossorigin="anonymous"></script>
   </div>
 </div>
 <!-- popup part start-->
-<div class="popup popup-personalconfig">
+<div class="popup popup-personalconfig" id="popup-personalconfig">
   <header class="bar bar-nav">
   <h1 class='title'>个人设置</h1>
 </header>
@@ -234,12 +237,12 @@ crossorigin="anonymous"></script>
           <div class="item-inner">
             <div class="item-title label">昵称</div>
             <div class="item-input">
-              <input type="text" placeholder="Your name">
+              <input type="text"  id ="newnickname" :value="nickname"></input>
             </div>
           </div>
         </div>
       </li>
-      <li>
+     <!--  <li>
         <div class="item-content">
           <div class="item-media"><i class="icon icon-form-email"></i></div>
           <div class="item-inner">
@@ -249,14 +252,25 @@ crossorigin="anonymous"></script>
             </div>
           </div>
         </div>
-      </li>
+      </li> -->
       <li>
         <div class="item-content">
           <div class="item-media"><i class="icon icon-form-password"></i></div>
           <div class="item-inner">
             <div class="item-title label">密码</div>
             <div class="item-input">
-              <input type="password" placeholder="Password" class="">
+              <input type="password" id ="newpassword" :value="password"  class="">
+            </div>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="item-content">
+          <div class="item-media"><i class="icon icon-form-password"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">确认密码</div>
+            <div class="item-input">
+              <input type="password" id ="newpassword_again"  :value="password_again" class="">
             </div>
           </div>
         </div>
@@ -267,16 +281,16 @@ crossorigin="anonymous"></script>
           <div class="item-inner">
             <div class="item-title label">性别</div>
             <div class="item-input">
-              <select>
-                <option>男</option>
-                <option>女</option>
+              <select id="newsex_selection" :value="sex">
+                <option>Male</option>
+                <option>Female</option>
               </select>
             </div>
           </div>
         </div>
       </li>
       <!-- Date -->
-      <li>
+      <!-- <li>
         <div class="item-content">
           <div class="item-media"><i class="icon icon-form-calendar"></i></div>
           <div class="item-inner">
@@ -286,7 +300,7 @@ crossorigin="anonymous"></script>
             </div>
           </div>
         </div>
-      </li>
+      </li> -->
       <!-- Switch (Checkbox) -->
       <!--
       <li>
@@ -307,9 +321,9 @@ crossorigin="anonymous"></script>
         <div class="item-content">
           <div class="item-media"><i class="icon icon-form-comment"></i></div>
           <div class="item-inner">
-            <div class="item-title label">个人描述</div>
+            <div class="item-title label" >个人描述</div>
             <div class="item-input">
-              <textarea></textarea>
+              <textarea id ="newdescription" :value="description"></textarea>
             </div>
           </div>
         </div>
@@ -319,7 +333,7 @@ crossorigin="anonymous"></script>
   <div class="content-block">
     <div class="row">
       <div class="col-50"><a href="#" class="button button-big button-fill button-danger close-popup">取消</a></div>
-      <div class="col-50"><a href="#" class="button button-big button-fill button-success close-popup">提交</a></div>
+      <div class="col-50"><a href="#" class="button button-big button-fill button-success close-popup" onclick="submitPersonalInfoChange()">提交</a></div>
     </div>
   </div>
 </div>
