@@ -215,7 +215,7 @@ crossorigin="anonymous"></script>
 	<p>您尚未登录</p>
 	 <p><a href="login.html" class="color-primary close-panel close-nav">登录</a>以使用网站的完整功能</p>
 	 <p>还没有账号?点这里<a href="register.html" class="color-primary close-panel">注册</a>一个</p>
-	<p><a href="#" onclick="Update()">刷新</a></p>
+	<p><a href="#" >刷新</a></p>
 	<p><a href="#" class="close-panel">关闭</a></p>
   </div>
   <div class="list-block">
@@ -223,7 +223,7 @@ crossorigin="anonymous"></script>
   </div>
 </div>
 <!-- popup part start-->
-<div class="popup popup-personalconfig">
+<div class="popup popup-personalconfig" id="popup-personalconfig">
   <header class="bar bar-nav">
   <h1 class='title'>个人设置</h1>
 </header>
@@ -237,7 +237,7 @@ crossorigin="anonymous"></script>
           <div class="item-inner">
             <div class="item-title label">昵称</div>
             <div class="item-input">
-              <input type="text" placeholder="Your name here" id ="newnickname">
+              <input type="text"  id ="newnickname" :value="nickname"></input>
             </div>
           </div>
         </div>
@@ -259,7 +259,7 @@ crossorigin="anonymous"></script>
           <div class="item-inner">
             <div class="item-title label">密码</div>
             <div class="item-input">
-              <input type="password" id ="modify_password" placeholder="Password" class="">
+              <input type="password" id ="newpassword" :value="password"  class="">
             </div>
           </div>
         </div>
@@ -270,7 +270,7 @@ crossorigin="anonymous"></script>
           <div class="item-inner">
             <div class="item-title label">确认密码</div>
             <div class="item-input">
-              <input type="password" id ="modify_password_again" placeholder="Password" class="">
+              <input type="password" id ="newpassword_again"  :value="password_again" class="">
             </div>
           </div>
         </div>
@@ -281,9 +281,9 @@ crossorigin="anonymous"></script>
           <div class="item-inner">
             <div class="item-title label">性别</div>
             <div class="item-input">
-              <select>
-                <option>男</option>
-                <option>女</option>
+              <select id="newsex_selection" :value="sex">
+                <option>Male</option>
+                <option>Female</option>
               </select>
             </div>
           </div>
@@ -321,9 +321,9 @@ crossorigin="anonymous"></script>
         <div class="item-content">
           <div class="item-media"><i class="icon icon-form-comment"></i></div>
           <div class="item-inner">
-            <div class="item-title label">个人描述</div>
+            <div class="item-title label" >个人描述</div>
             <div class="item-input">
-              <textarea id ="description"></textarea>
+              <textarea id ="newdescription" :value="description"></textarea>
             </div>
           </div>
         </div>

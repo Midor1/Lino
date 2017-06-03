@@ -12,11 +12,11 @@ $(document).ready(function ()
 {
     // if($.cookie("Login_Success")==null)
     //TODO:记得改回来...现在是为了方便调试.....	
-     if($.cookie("Login_Success")!=null){
-         $.alert('登录失效,请重新登录', '遇到问题辣%>_<%!', function () {
-            window.location.href="Login.html";
-        });
-    };
+    //  if($.cookie("Login_Success")!=null){
+    //      $.alert('登录失效,请重新登录', '遇到问题辣%>_<%!', function () {
+    //         window.location.href="Login.html";
+    //     });
+    // };
     if (LiveList==null || LiveList.$data.Live_Item_List.length == 0)
     $.showPreloader("请稍等一下下%>_<%\n点击可以关闭我哦");
     //alert(localStorage.uid);
@@ -82,7 +82,8 @@ var LiveList = new Vue(
                     datatype:"json",
         	    success:function(data,status)
         		{
-        			$.each(data.lives,function(index,item)
+                                     result = JSON.parse(data);
+        			$.each(result.lives,function(index,item)
     	                            {
     	                            	
                                         LiveList.$data.Live_Item_List.push(
@@ -98,7 +99,7 @@ var LiveList = new Vue(
     	                               }
     	                          );
         			  });
-        			LiveList.$data.latest = data.lives.length;
+        			LiveList.$data.latest = result.lives.length;
         			$.hidePreloader();
         		}
             }
@@ -140,7 +141,8 @@ var PersonalPageLiveList = new Vue(
                     datatype:"json",
                 success:function(data,status)
                 {
-                    $.each(data.lives,function(index,item)
+                    result = JSON.parse(data);
+                    $.each(result.lives,function(index,item)
                                     {
                                         
                                         PersonalPageLiveList.$data.Live_Item_List.push(
@@ -156,7 +158,8 @@ var PersonalPageLiveList = new Vue(
                                        }
                                   );
                       });
-                    PersonalPageLiveList.$data.latest = data.lives.length;
+                    PersonalPageLiveList.$data.latest = result.lives.length;
+                    
                     $.hidePreloader();
                 }
             }
@@ -181,22 +184,22 @@ var SearchLiveList = new Vue(
     }
 })
 
-function Update() {
-	LiveList.$data.Live_Item_List = [
-		{
-			title:"Lalala",
-			starttime:"2017/05/11 12:00:00",
-			content:"hh",
-			href:"http://www.baidu.com"
-		},
-		{
-			title:"MyGree",
-			starttime:"2017/05/11 12:00:00",
-			content:"hh",
-			href:"http://www.bilibili.com"
-		}
-	];
-}
+// function Update() {
+// 	LiveList.$data.Live_Item_List = [
+// 		{
+// 			title:"Lalala",
+// 			starttime:"2017/05/11 12:00:00",
+// 			content:"hh",
+// 			href:"http://www.baidu.com"
+// 		},
+// 		{
+// 			title:"MyGree",
+// 			starttime:"2017/05/11 12:00:00",
+// 			content:"hh",
+// 			href:"http://www.bilibili.com"
+// 		}
+// 	];
+// }
 function Like() {
 	//title_2.title='Thank you!';
 	alert('Thank you!');
@@ -243,29 +246,100 @@ var PersonalPage = new Vue
        	focus:2,
        	fans:2,
        	LiveAmount:2,
-       	nickname:"Midor",
-       	personalDescription:"a BUAA dalao!"
+       	nickname:"",
+       	personalDescription:"",
+             sex:""
+       },
+       methods:
+       {
+
+       },
+       created:function()
+       {
+              $.ajax(
+               {
+               type:"GET",
+               xhrFields: 
+                {
+                    withCredentials: true
+                },
+                   datatype:"json",
+                    url: serverurl+"/users/me",
+                   success:function(data,status)
+                   {
+                //alert(data.user.uid);
+                list =JSON.parse(data);
+                        if (status=200)
+                        {
+                                  localStorage.uid=list.user.uid;
+                                  localStorage.nickname=list.user.nickname;
+                                  PersonalPage.$data.nickname = list.user.nickname;
+                                  // alert(list.user.others);
+                                  // alert(JSON.stringify(list.user.others));
+                                  // alert(JSON.parse(list.user.others).sex);
+                                  others=list.user.others;
+
+                                  PersonalPage.$data.personalDescription=others.description;
+                                  PersonalPage.$data.sex=others.sex;
+                        }
+                        else
+                          $.alert("登录失败！");
+                   }
+                  
+               }
+                   );
        }
 })
-var openPersonalConfig = new Vue(
+
+var PersonalConfig = new Vue(
 {
-  el:"#open-personalconfig",
-  methods:
-  {
-  	PopupPersonalConfig:function()
-  	{
-  		//alert("Hello!");
-  		$.popup('.popup-personalconfig');
-  	}
-  }
+    el:"#popup-personalconfig",
+    data:
+    {
+           nickname:localStorage.nickname,
+           password:localStorage.password,
+           password_again:localStorage.password,
+           description:PersonalPage.$data.personalDescription,
+           sex:PersonalPage.$data.sex,
+    },
+    created:function()
+    {
+        // PersonalConfig.$data.nickname="123";
+        //$("#newnickname").val(nickname);
+        // alert(localStorage.nickname);
+        // alert(localStorage.password);
+
+                        // $("#newnickname").val(localStorage.nickname);
+                        // $("#newpassword").val(localStorage.password);
+                        //  $("#newpassword_again").val(localStorage.password);
+                        //  $("#newsex_selection").val(PersonalPage.$data.sex);
+                        //  $("#newdescription").val(PersonalPage.$data.personalDescription);
+    },
+    updated:function()
+    {
+       // PersonalConfig.$data.nickname="123";
+        // $("#newnickname").val(localStorage.nickname);
+        //                 $("#newpassword").val(localStorage.password);
+        //                  $("#newpassword_again").val(localStorage.password);
+        //                  $("#newsex_selection").val(PersonalPage.$data.sex);
+        //                  $("#newdescription").val(PersonalPage.$data.personalDescription);
+    },
+    mounted:function()
+    {
+        // PersonalConfig.$data.nickname="123";
+    }
+
 }
-)
+    )
+
 function submitPersonalInfoChange()
 {
     newnickname = $("#newnickname").val();
-    description = $("#description").val();
-    password=$("#modify_password").val();
-    password_again=$("#modify_password_again").val();
+    description = $("#newdescription").val();
+    password=$("#newpassword").val();
+    password_again=$("#newpassword_again").val();
+    sex=$("#newsex_selection").val();
+
     if (password !=password_again)
     {
         $.alert("两次输入的密码不一致！");
@@ -273,11 +347,16 @@ function submitPersonalInfoChange()
     }
     else
     {
+        alert(password);
+        // alert(password);
+         PersonalPage.$data.nickname=newnickname;
+         PersonalPage.$data.personalDescription=description;
+
     $.ajax(
       {
-        url:serverurl+"/users/me",
+        url:serverurl+"/users/"+localStorage.uid,
         type:'PUT',
-        data:
+        data:JSON.stringify(
         {
             "user":
             {
@@ -285,11 +364,12 @@ function submitPersonalInfoChange()
                 "nickname":newnickname,
                 "others":
                 {
-                    "description":description
+                    "description":description,
+                    "sex":sex
                 }
             },
-            "password":$.sha256(localStorage.mail,password,"Lino")
-        },
+            "password":$.sha256(localStorage.email+password+"Lino")
+        }),
         xhrFields:
         {
             withCredentials:true
@@ -297,6 +377,8 @@ function submitPersonalInfoChange()
         success:function(data,status)
         {
             $.alert("修改成功");
+            localStorage.password=password;
+            localStorage.nickname=nickname;
         }
       }
         );
@@ -308,7 +390,7 @@ function startSearch()
     uid = $("#search").val();
         $.ajax(
       {
-        url:serverurl+"/live?host="+uid+"&upcoming=0&from=0",
+        url:serverurl+"/lives?host="+uid+"&upcoming=0&from=0",
         type:'GET',
         xhrFields:
         {
@@ -318,7 +400,8 @@ function startSearch()
         {
             a = JSON.parse(data);
             list = a.lives;
-            $.each(data.lives,function(index,item)
+            result = JSON.parse(data);
+            $.each(result.lives,function(index,item)
                                     {
                                         
                                         SearchLiveList.$data.Live_Item_List.push(
@@ -334,7 +417,7 @@ function startSearch()
                                        }
                                   );
                                   });
-            SearchLiveList.$data.latest = data.lives.length;
+            SearchLiveList.$data.latest = result.lives.length;
 
         }
       }

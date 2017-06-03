@@ -27,7 +27,7 @@ crossorigin="anonymous"></script>
         {
         	
              password = $("#password_input").val();
-             mail = $("#email_input").val();
+             email = $("#email_input").val();
              $.ajax(
              	{type:'POST',
              	xhrFields: 
@@ -35,12 +35,12 @@ crossorigin="anonymous"></script>
       		    withCredentials: true
  	    	},
              	url: serverurl+"/users/auth",
-             	data:{"authinfo":
+             	data:JSON.stringify({"authinfo":
 			 {
-			    "mail":mail,
-		                 "hashedPassword":$.sha256(mail,password,"Lino")
+			    "mail":email,
+		                 "hashedPassword":$.sha256(email+password+"Lino")
 		             }
-		         },
+		         }),
                          success:function (data, status)
                           {
                        	       $.ajax(
@@ -55,17 +55,23 @@ crossorigin="anonymous"></script>
                        	       success:function(data,status)
     		       {
     			//alert(data.user.uid);
+    			list =JSON.parse(data);
+                        if (status=200)
+                        {
 
-            			localStorage.uid = data.user.uid;
-            			localStorage.mail=mail;
+                        localStorage.uid = list.user.uid;
+            		localStorage.email=email;
+            		localStorage.password=password;
+            		localStorage.nickname = list.user.nickname;
+                        window.location.href="index.html";
+                        }
+                        else
+                          $.alert("登录失败！");
     		       }
-    		       error:function(XMLHttpRequest, textStatus, errorThrown)
-    		       {
-    		       	$.alert(textStatus);
-    		       }
+    		      
     		   }
     		       );
-                              window.location.href="index.html";
+                              
                           }
                       }
              );
