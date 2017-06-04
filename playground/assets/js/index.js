@@ -19,6 +19,10 @@ $(document).ready(function() {
     if (LiveList == null || LiveList.$data.Live_Item_List.length == 0)
         $.showPreloader("请稍等一下下%>_<%\n点击可以关闭我哦");
     //alert(localStorage.uid);
+    if (localStorage.uid !== undefined)
+    {
+        $("#panel-left").remove();
+    }
 
 });
 Vue.component('live_item', {
@@ -193,6 +197,22 @@ function More() {
     alert('敬请期待');
 }
 
+$(document).on('click','.prompt-ok', function () {
+    $.prompt('What is your name?', function (value) {
+        $.alert('Your name is "' + value + '". You clicked Ok button');
+    });
+});
+
+function Logout() {
+    localStorage.clear();
+    var keys=document.cookie.match(/[^ =;]+(?=\=)/g);
+    if (keys) {
+        for (var i = keys.length; i--;)
+            document.cookie=keys[i]+'=0;expires=' + new Date(0).toUTCString()
+    }
+    window.location.href="index.html";
+}
+
 function Contact() {
     window.open('tencent://message/?uin=419811184');
     window.open('mqqwpa://im/chat?chat_type=wpa&uin=419811184&version=1');
@@ -302,6 +322,13 @@ var PersonalConfig = new Vue({
     }
 
 })
+
+function SubmitExpiration() {
+    var expiration = $("#expiration").val();
+    var now = new Date();
+    now.setTime(now.getTime() + expiration * 24 * 3600 * 1000);
+    document.cookie = "expires=" + now.toUTCString();
+}
 
 function submitPersonalInfoChange() {
     newnickname = $("#newnickname").val();

@@ -136,7 +136,7 @@ crossorigin="anonymous"></script>
   </div>
   <div class="content-block" id="Search_Live_List" > 
             <live_item v-for="(item,index) in Live_Item_List" :key="index" v-bind:index="index" v-bind:Live="item" @click.native="OnListItemClick(item)"></Live_Item>
-        </div>+
+        </div>
 </div>
 <div id="page-settings" class="page page-settings">
   <header class="bar bar-nav">
@@ -149,25 +149,19 @@ crossorigin="anonymous"></script>
     <div class="page-settings">
       <div class="list-block list">
         <ul>
-          <li class="item-content item-link">
+          <li class="item-content item-link" onclick="$.popup('.popup-account')">
             <div class="item-media"><i class="icon icon-settings"></i></div>
             <div class="item-inner">
               <div class="item-title">账户</div>
             </div>
           </li>
-          <li class="item-content item-link">
-            <div class="item-media"><i class="icon icon-me"></i></div>
-            <div class="item-inner">
-              <div class="item-title">个人</div>
-            </div>
-          </li>
-          <li class="item-content item-link">
+          <li class="item-content item-link" onclick="alert('敬请期待')">
             <div class="item-media"><i class="icon icon-message"></i></div>
             <div class="item-inner">
               <div class="item-title">通知</div>
             </div>
           </li>
-          <li class="item-content item-link">
+          <li class="item-content item-link" onclick="alert('敬请期待')">
             <div class="item-media"><i class="icon icon-star"></i></div>
             <div class="item-inner">
               <div class="item-title">订阅</div>
@@ -179,23 +173,36 @@ crossorigin="anonymous"></script>
               <div class="item-title">帮助</div>
             </div>
           </li>
-          <a href="#" class="open-popup open-about" data-popup=".popup-about">
-          <li class="item-content item-link">
+          <li class="item-content item-link" onclick="$.popup('.popup-about')">
             <div class="item-media"><i class="icon icon-caret"></i></div>
             <div class="item-inner">
 				<div class="item-title">关于</div>
             </div>
-            
           </li>
-          </a>
         </ul>
       </div>
       <div class="content-block">
-        <a href="index.html" class="button button-big button-fill button-danger external">清除浏览数据</a>
-        <br>
-        <a href="index.html" class="button button-big button-fill button-danger external">注销</a>
+        <a onclick="Logout()" class="button button-big button-fill button-danger external">注销</a>
       </div>
     </div>
+  </div>
+</div>
+<div class="popup popup-account">
+  <div class="content-block">
+    <div class="list-block list">
+      <ul>
+        <li class="item-content item-link">
+          <div class="item-media"><i class="icon icon-me"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">过期时间</div>
+            <div class="item-input">
+              <input type="number" id="expiration" placeholder="例:3(天后过期)">
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <p><a href="#" onclick="SubmitExpiration()" class="close-popup">返回</a></p>
   </div>
 </div>
 <div class="popup popup-about">
@@ -210,7 +217,7 @@ crossorigin="anonymous"></script>
 </div>
 <div class="panel-overlay"></div>
 <!-- Left Panel with Reveal effect -->
-<div class="panel panel-left panel-cover theme-dark" id="panel-left">
+<div class="panel panel-left panel-reveal theme-dark" id="panel-left">
   <div class="content-block">
 	<p>您尚未登录</p>
 	 <p><a href="login.html" class="color-primary close-panel close-nav">登录</a>以使用网站的完整功能</p>
@@ -220,6 +227,19 @@ crossorigin="anonymous"></script>
   </div>
   <div class="list-block">
 	<!-- .... -->
+  </div>
+</div>
+<div class="panel panel-left panel-reveal theme-dark" id="panel-logged">
+  <div class="content-block">
+    <div class="item-media"><img src="http://main-pics.oss-cn-hangzhou.aliyuncs.com/hcj.jpg" width="90"></div>
+    <div class="item-inner">
+      <div class="item-title">{{nickname}}</div>
+      <div class="item-subtitle">{{personalDescription}}</div>
+    </div>
+    <p><a href="#" class="close-panel">关闭</a></p>
+  </div>
+  <div class="list-block">
+    <!-- .... -->
   </div>
 </div>
 <!-- popup part start-->
@@ -237,7 +257,7 @@ crossorigin="anonymous"></script>
           <div class="item-inner">
             <div class="item-title label">昵称</div>
             <div class="item-input">
-              <input type="text"  id ="newnickname" :value="nickname"></input>
+              <input type="text"  id ="newnickname" :value="nickname">
             </div>
           </div>
         </div>
@@ -270,7 +290,7 @@ crossorigin="anonymous"></script>
           <div class="item-inner">
             <div class="item-title label">确认密码</div>
             <div class="item-input">
-              <input type="password" id ="newpassword_again"  :value="password_again" class="">
+              <input type="password" id ="newpassword_again" :value="password_again" class="">
             </div>
           </div>
         </div>
