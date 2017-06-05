@@ -1,14 +1,14 @@
 /*var title_2 = new Vue({
-	el: '#title_2',
-	data:{
-		title: 'This is a new one!'
-	}
-});*/
+ el: '#title_2',
+ data:{
+ title: 'This is a new one!'
+ }
+ });*/
 /*jshint multistr: true */
 //TODO: change serverurl and hide it during deployment
 var serverurl = "http://q.aureliano.cc:4567";
 
-$(document).ready(function() {
+$(document).ready(function () {
     // if($.cookie("Login_Success")==null)
     //TODO:记得改回来...现在是为了方便调试.....	
     //  if($.cookie("Login_Success")!=null){
@@ -18,13 +18,8 @@ $(document).ready(function() {
     // };
     if (LiveList == null || LiveList.$data.Live_Item_List.length == 0)
         $.showPreloader("请稍等一下下%>_<%\n点击可以关闭我哦");
-    //alert(localStorage.uid);
-    if (localStorage.uid !== undefined)
-    {
-        $("#panel-left").remove();
-    }
-
 });
+
 Vue.component('live_item', {
     props: ['live'], //title,begin_time,description
     template: '                             \
@@ -44,7 +39,7 @@ Vue.component('live_item', {
 		</div>\
 		<div class="card-footer">\
 		<div>\
-		             <div style="display:inline-block"> \
+		    <div style="display:inline-block"> \
 			<a href="#" class="link" onclick="Like()">赞</a>\
 			</div>\
 			<div style="display:inline-block"> \
@@ -60,25 +55,24 @@ var LiveList = new Vue({
     el: '#Live_List',
     data: {
         Live_Item_List: [],
-        latest: 0,
-
+        latest: 0
     },
     methods: {
-        OnListItemClick: function(item) {
+        OnListItemClick: function (item) {
             //alert("WTF");
             window.location.href = item.href;
         },
-        Init: function() {
+        Init: function () {
             $.ajax({
                 type: 'GET',
-                url: serverurl + "/lives?host=0&upcoming=1&from=0",
+                url: serverurl + "/lives?host=0&upcomdoneing=1&from=0",
                 xhrFields: {
                     withCredentials: true
                 },
                 datatype: "json",
-                success: function(data, status) {
+                success: function (data, status) {
                     result = JSON.parse(data);
-                    $.each(result.lives, function(index, item) {
+                    $.each(result.lives, function (index, item) {
                         LiveList.$data.Live_Item_List.push({
                             title: item.name,
                             begin_time: new Date(item.begin_time).toLocaleString(),
@@ -96,11 +90,54 @@ var LiveList = new Vue({
             });
         }
     },
-    created: function() {
+    created: function () {
+        if (typeof(localStorage.uid) !== "undefined") {
+            $.ajax(
+                {
+                    type:'POST',
+                    xhrFields:
+                        {
+                            withCredentials: true
+                        },
+                    url: serverurl+"/users/auth",
+                    data:JSON.stringify({"authinfo":
+                        {
+                            "mail":localStorage.email,
+                            "hashedPassword":$.sha256(localStorage.email+localStorage.password+"Lino")
+                        }
+                    }),
+                    success:function (data, status)
+                    {
+                        $("#panel-left").remove();
+                    }
+                }
+            );
+        }
+        else {
+            $("#panel-logged").remove();
+        }
         this.Init();
-
     }
 })
+
+var form = document.forms.namedItem("fileinfo");
+form.addEventListener('submit', function(ev) {
+    //TODO:Bind image with DOM Objects(Waiting for Get Avatar API Implementation)
+    var oOutput = document.querySelector("div"),
+        oData = new FormData(form);
+    var oReq = new XMLHttpRequest();
+    oReq.open("POST", serverurl + "/files", true);
+    oReq.onload = function(oEvent) {
+        if (oReq.status == 200) {
+            oOutput.innerHTML = "Uploaded!";
+        } else {
+            oOutput.innerHTML = "Error " + oReq.status + " occurred when trying to upload your file.<br \/>";
+        }
+    };
+
+    oReq.send(oData);
+    ev.preventDefault();
+}, false);
 
 function getlike(likeurl) {
     var result = 0;
@@ -110,7 +147,7 @@ function getlike(likeurl) {
             withCredentials: true
         },
         url: likeurl,
-        success: function(data, status) {
+        success: function (data, status) {
             result = data;
         }
     });
@@ -120,15 +157,14 @@ var PersonalPageLiveList = new Vue({
     el: '#PersonalPage_Live_List',
     data: {
         Live_Item_List: [],
-        latest: 0,
-
+        latest: 0
     },
     methods: {
-        OnListItemClick: function(item) {
+        OnListItemClick: function (item) {
             //alert("WTF");
             window.location.href = item.href;
         },
-        Init: function() {
+        Init: function () {
             $.ajax({
                 type: 'GET',
                 url: serverurl + "/lives?host=" + localStorage.uid + "&upcoming=0&from=0",
@@ -136,9 +172,9 @@ var PersonalPageLiveList = new Vue({
                     withCredentials: true
                 },
                 datatype: "json",
-                success: function(data, status) {
+                success: function (data, status) {
                     result = JSON.parse(data);
-                    $.each(result.lives, function(index, item) {
+                    $.each(result.lives, function (index, item) {
 
                         PersonalPageLiveList.$data.Live_Item_List.push({
                             title: item.name,
@@ -152,13 +188,12 @@ var PersonalPageLiveList = new Vue({
                         });
                     });
                     PersonalPageLiveList.$data.latest = result.lives.length;
-
                     $.hidePreloader();
                 }
             });
         }
     },
-    created: function() {
+    created: function () {
         this.Init();
 
     }
@@ -193,24 +228,25 @@ function Like() {
     alert('Thank you!');
 }
 
-function More() {
-    alert('敬请期待');
-}
-
-$(document).on('click','.prompt-ok', function () {
-    $.prompt('What is your name?', function (value) {
-        $.alert('Your name is "' + value + '". You clicked Ok button');
-    });
-});
-
 function Logout() {
     localStorage.clear();
-    var keys=document.cookie.match(/[^ =;]+(?=\=)/g);
+    var keys = document.cookie.match(/[^ =;]+(?=\=)/g);
     if (keys) {
         for (var i = keys.length; i--;)
-            document.cookie=keys[i]+'=0;expires=' + new Date(0).toUTCString()
+            document.cookie = keys[i] + '=0;expires=' + new Date(0).toUTCString()
     }
-    window.location.href="index.html";
+    $.ajax(
+        {
+            type: 'DELETE',
+            xhrFields: {
+                withCredentials: true
+            },
+            url: serverurl + "/users/auth",
+            success: function (data, status) {
+                window.location.href = "index.html";
+            }
+        }
+    );
 }
 
 function Contact() {
@@ -255,10 +291,8 @@ var PersonalPage = new Vue({
         personalDescription: "",
         sex: ""
     },
-    methods: {
-
-    },
-    created: function() {
+    methods: {},
+    created: function () {
         $.ajax({
             type: "GET",
             xhrFields: {
@@ -266,13 +300,14 @@ var PersonalPage = new Vue({
             },
             datatype: "json",
             url: serverurl + "/users/me",
-            success: function(data, status) {
+            success: function (data, status) {
                 //alert(data.user.uid);
                 list = JSON.parse(data);
                 if (status = 200) {
                     localStorage.uid = list.user.uid;
                     localStorage.nickname = list.user.nickname;
                     PersonalPage.$data.nickname = list.user.nickname;
+
                     // alert(list.user.others);
                     // alert(JSON.stringify(list.user.others));
                     // alert(JSON.parse(list.user.others).sex);
@@ -288,6 +323,34 @@ var PersonalPage = new Vue({
     }
 })
 
+var PersonalPanel = new Vue({
+    el: "#panel-logged",
+    data: {
+        nickname: "",
+        personalDescription: "",
+        sex: ""
+    },
+    methods: {},
+    created: function () {
+        $.ajax({
+            type: "GET",
+            xhrFields: {
+                withCredentials: true
+            },
+            url: serverurl + "/users/me",
+            success: function (data, status) {
+                list = JSON.parse(data);
+                if (status = 200) {
+                    PersonalPanel.$data.nickname = list.user.nickname;
+                    PersonalPage.$data.personalDescription = list.user.others.description;
+                } else
+                    ;
+            }
+
+        });
+    }
+})
+
 var PersonalConfig = new Vue({
     el: "#popup-personalconfig",
     data: {
@@ -297,7 +360,7 @@ var PersonalConfig = new Vue({
         description: PersonalPage.$data.personalDescription,
         sex: PersonalPage.$data.sex,
     },
-    created: function() {
+    created: function () {
         // PersonalConfig.$data.nickname="123";
         //$("#newnickname").val(nickname);
         // alert(localStorage.nickname);
@@ -309,7 +372,7 @@ var PersonalConfig = new Vue({
         //  $("#newsex_selection").val(PersonalPage.$data.sex);
         //  $("#newdescription").val(PersonalPage.$data.personalDescription);
     },
-    updated: function() {
+    updated: function () {
         // PersonalConfig.$data.nickname="123";
         // $("#newnickname").val(localStorage.nickname);
         //                 $("#newpassword").val(localStorage.password);
@@ -317,7 +380,7 @@ var PersonalConfig = new Vue({
         //                  $("#newsex_selection").val(PersonalPage.$data.sex);
         //                  $("#newdescription").val(PersonalPage.$data.personalDescription);
     },
-    mounted: function() {
+    mounted: function () {
         // PersonalConfig.$data.nickname="123";
     }
 
@@ -328,6 +391,7 @@ function SubmitExpiration() {
     var now = new Date();
     now.setTime(now.getTime() + expiration * 24 * 3600 * 1000);
     document.cookie = "expires=" + now.toUTCString();
+    setTimeout("localStorage.clear();",now.getTime());
 }
 
 function submitPersonalInfoChange() {
@@ -363,7 +427,7 @@ function submitPersonalInfoChange() {
             xhrFields: {
                 withCredentials: true
             },
-            success: function(data, status) {
+            success: function (data, status) {
                 $.alert("修改成功");
                 localStorage.password = password;
                 localStorage.nickname = nickname;
@@ -381,11 +445,11 @@ function startSearch() {
         xhrFields: {
             withCredentials: true
         },
-        success: function(data, status) {
+        success: function (data, status) {
             a = JSON.parse(data);
             list = a.lives;
             result = JSON.parse(data);
-            $.each(result.lives, function(index, item) {
+            $.each(result.lives, function (index, item) {
 
                 SearchLiveList.$data.Live_Item_List.push({
                     title: item.name,

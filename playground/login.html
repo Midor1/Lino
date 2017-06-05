@@ -21,64 +21,7 @@ crossorigin="anonymous"></script>
 <link rel="shortcut icon" href="//static.hdslb.com/images/favicon.ico">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <script>
-        var serverurl = "http://q.aureliano.cc:4567";
-        function Login()
-        {
-        	
-             password = $("#password_input").val();
-             email = $("#email_input").val();
-             $.ajax(
-             	{type:'POST',
-             	xhrFields: 
-             	{
-      		    withCredentials: true
- 	    	},
-             	url: serverurl+"/users/auth",
-             	data:JSON.stringify({"authinfo":
-			 {
-			    "mail":email,
-		                 "hashedPassword":$.sha256(email+password+"Lino")
-		             }
-		         }),
-                         success:function (data, status)
-                          {
-                       	       $.ajax(
-                       	       {
-                       	       type:"GET",
-                       	       xhrFields: 
-             	       {
-      		    	withCredentials: true
- 	    	       },
- 	    	       datatype:"json",
-                       	       url:	serverurl+"/users/me",
-                       	       success:function(data,status)
-    		       {
-    			//alert(data.user.uid);
-    			list =JSON.parse(data);
-                        if (status=200)
-                        {
 
-                        localStorage.uid = list.user.uid;
-            		localStorage.email=email;
-            		localStorage.password=password;
-            		localStorage.nickname = list.user.nickname;
-                        window.location.href="index.html";
-                        }
-                        else
-                          $.alert("登录失败！");
-    		       }
-    		      
-    		   }
-    		       );
-                              
-                          }
-                      }
-             );
-			//alert(username+" "+password);
-
-        }
-        </script>
 
 </head>
 
@@ -97,7 +40,7 @@ crossorigin="anonymous"></script>
 			  <div class="item-inner">
 				<div class="item-title label">邮箱地址</div>
 				<div class="item-input">
-				  <input id="email_input"type="text" placeholder="Email">
+				  <input id="email_input" type="text" placeholder="Email">
 				</div>
 			  </div>
 			</div>
@@ -119,10 +62,64 @@ crossorigin="anonymous"></script>
 		<div class="row">
 		  <div class="col-50"><a href="index.html#page-home" class="button button-big button-fill button-danger back">返回</a></div>
 		  <div class="col-50"><a href="#" class="button button-big button-fill button-success" onclick="Login()" >登录</a></div>
+			<script>
+                var serverurl = "http://q.aureliano.cc:4567";
+                function Login()
+                {
+
+                    password = $("#password_input").val();
+                    email = $("#email_input").val();
+                    $.ajax(
+                        {
+							type:'POST',
+                            xhrFields:
+                                {
+                                    withCredentials: true
+                                },
+                            url: serverurl+"/users/auth",
+                            data:JSON.stringify({"authinfo":
+                                {
+                                    "mail":email,
+                                    "hashedPassword":$.sha256(email+password+"Lino")
+                                }
+                            }),
+                            success:function (data, status)
+                            {
+                                $.ajax(
+                                    {
+                                        type:"GET",
+                                        xhrFields:
+                                            {
+                                                withCredentials: true
+                                            },
+                                        datatype:"json",
+                                        url:	serverurl+"/users/me",
+                                        success:function(data,status)
+                                        {
+                                            //alert(data.user.uid);
+                                            list =JSON.parse(data);
+                                            if (status=200)
+                                            {
+                                                localStorage.uid = list.user.uid;
+                                                localStorage.email=email;
+                                                localStorage.password=password;
+                                                localStorage.nickname = list.user.nickname;
+                                                window.location.href="index.html";
+                                            }
+                                            else
+                                                $.alert("登录失败！");
+                                        }
+                                    }
+                                );
+
+                            }
+                        }
+                    );
+                }
+			</script>
 		</div>
 	  </div>
 	</div>
 </div>
-
 </body>
 </html>

@@ -16,16 +16,18 @@ crossorigin="anonymous"></script>
 <script src="https://cdn.bootcss.com/light7/0.4.3/js/light7-swipeout.js"></script>
 <script src="https://cdn.bootcss.com/light7/0.4.3/js/light7-swiper.js"></script>
 <script src="https://cdn.bootcss.com/light7/0.4.3/js/light7.js"></script>
+
 <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 <link rel="shortcut icon" href="//static.hdslb.com/images/favicon.ico">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="Access-Control-Allow-Origin" content="*">
-<script src="assets\js\jquery.sha256.js"></script>
-<script src="assets\js\jquery.cookie.js"></script>
+<script src="assets/js/jquery.sha256.js"></script>
+<script src="assets/js/jquery.cookie.js"></script>
+
 </head>
 
-<body> 
+<body>
 <nav class="bar bar-tab">
 <a class="tab-item active" href="#page-home">
   <span class="icon icon-home"></span>
@@ -56,7 +58,7 @@ crossorigin="anonymous"></script>
     <div class="preloader"></div>
     <div class="pull-to-refresh-arrow"></div>
      </div>
-	<div class="content-block" id="Live_List" > 
+	<div class="content-block" id="Live_List" >
 	<live_item v-for="(item,index) in Live_Item_List" :key="index" v-bind:index="index" v-bind:Live="item" @click.native="OnListItemClick(item)"></Live_Item>
 	</div>
   </div>
@@ -74,7 +76,7 @@ crossorigin="anonymous"></script>
       <div class="list-block media-list person-card" >
         <ul>
           <li>
-            <div href="#" class="item-content">
+            <div class="item-content">
               <div class="item-media"><img src="http://main-pics.oss-cn-hangzhou.aliyuncs.com/hcj.jpg" width="80"></div>
               <div class="item-inner">
                 <div class="item-title-row">
@@ -106,13 +108,21 @@ crossorigin="anonymous"></script>
           <li class="item-content item-link">
             <div class="item-media"><i class="icon icon-me"></i></div>
             <div class="item-inner open-popup" id="open-personalconfig" >
-              <div class="item-title  " @click.native="PopupPersonalConfig()">个人信息配置</div>
+              <div class="item-title" @click.native="PopupPersonalConfig()">个人信息配置</div>
+            </div>
+          </li>
+        </ul>
+        <ul>
+          <li class="item-content item-link" onclick="window.location.href='start_live.html'">
+            <div class="item-media"><i class="icon icon-me"></i></div>
+            <div class="item-inner" id="open-createlive" >
+              <div class="item-title">创建新直播</div>
             </div>
           </li>
         </ul>
       </div>
       <div class="content-block-title">往期图文直播</div>
-	  <div class="content-block" id="PersonalPage_Live_List" > 
+	  <div class="content-block" id="PersonalPage_Live_List" >
             <live_item v-for="(item,index) in Live_Item_List" :key="index" v-bind:index="index" v-bind:Live="item" @click.native="OnListItemClick(item)"></Live_Item>
         </div>
     </div>
@@ -134,7 +144,7 @@ crossorigin="anonymous"></script>
       </div>
     </div>
   </div>
-  <div class="content-block" id="Search_Live_List" > 
+  <div class="content-block" id="Search_Live_List" >
             <live_item v-for="(item,index) in Live_Item_List" :key="index" v-bind:index="index" v-bind:Live="item" @click.native="OnListItemClick(item)"></Live_Item>
         </div>
 </div>
@@ -176,7 +186,7 @@ crossorigin="anonymous"></script>
           <li class="item-content item-link" onclick="$.popup('.popup-about')">
             <div class="item-media"><i class="icon icon-caret"></i></div>
             <div class="item-inner">
-				<div class="item-title">关于</div>
+			  <div class="item-title">关于</div>
             </div>
           </li>
         </ul>
@@ -233,13 +243,33 @@ crossorigin="anonymous"></script>
   <div class="content-block">
     <div class="item-media"><img src="http://main-pics.oss-cn-hangzhou.aliyuncs.com/hcj.jpg" width="90"></div>
     <div class="item-inner">
-      <div class="item-title">{{nickname}}</div>
+      <div class="item-title-row">
+        <div class="item-title" id="check-name">{{nickname}}</div>
+      </div>
       <div class="item-subtitle">{{personalDescription}}</div>
+
     </div>
-    <p><a href="#" class="close-panel">关闭</a></p>
+
   </div>
   <div class="list-block">
-    <!-- .... -->
+    <ul>
+      <li>
+        <div class="item-content">
+          <div class="item-media">更改头像</div>
+          <div class="item-inner">
+            <div class="item-input">
+                <form name="fileinfo" enctype="multipart/form-data">
+                  <input type="file" id="dmg" name="file" required>
+                  <input type="submit" value="确认修改！" />
+                </form>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div class="content-block">
+    <p><a href="#" class="close-panel">关闭</a></p>
   </div>
 </div>
 <!-- popup part start-->
@@ -359,7 +389,7 @@ crossorigin="anonymous"></script>
 </div>
 </div>
 <!-- popup part end-->
-<script src="assets\js\index.js"></script>
 
+<script src="assets/js/index.js"></script>
 </body>
 </html>

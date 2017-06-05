@@ -21,73 +21,6 @@ crossorigin="anonymous"></script>
 <link rel="shortcut icon" href="//static.hdslb.com/images/favicon.ico">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<script>
-   var serverurl = "http://q.aureliano.cc:4567";
-   function Register()
-   {
-       password = $("#register_password_input").val();
-       password_again = $("#register_password_again_input").val(); 
-       username = $("#register_username_input").val();
-       email = $("#register_email_input").val();
-       //alert($.sha256(email,password,"Lino"));
-       var matcher  = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/; 
-       if (!matcher.test(email))
-       {
-       	$.alert("邮箱格式错误");
-       	return ;
-       }
-       if (password != password_again)
-       {
-	   $.alert("两次输入密码不一致");
-	   return ;
-       }
-       else
-       {
-           $.ajax(
-           	 {xhrFields: {
-                 withCredentials: true
-             },
-             type:'POST',
-             url:serverurl+"/users", 
-             data: JSON.stringify({
-               "user":
-               {
-                   
-                   "others":{
-                   	"sex":$("#sex_selection").val(),
-                   	"description":$("#register_description").val()
-                   },
-                   "nickname": username,
-                   "uid":123
-               },
-               "authinfo":
-               {
-                   "mail": email,
-                   "hashedPassword":$.sha256(email+password+"Lino")
-               }
-
-           }),
-           success:function (data, status) 
-           {
-           	     if (status=200)
-           	     {
-                  $.alert("注册成功！接下来进入登录页面","恭喜");
-                  //$.cookie("Login_Success",$.sha256(new Date(),email,password),{path:'/'});
-                  window.location.href="login.html";
-              } 
-                 
-              
-            },
-            error:function(XMLHttpRequest, textStatus, errorThrown)
-            {
-            	         if (XMLHttpRequest.status=500)
-            	         $.alert("邮箱已经被使用过!");
-             }
-            }
-            );
-       }
-   }
-</script>
 </head>
 
 <body class="tabbar-hidden">
@@ -175,6 +108,73 @@ crossorigin="anonymous"></script>
 		<div class="row">
 		  <div class="col-50"><a href="index.html#page-home" class="button button-big button-fill button-danger back">返回</a></div>
 		  <div class="col-50"><a href="#" onclick="Register()" class="button button-big button-fill button-success">注册</a></div>
+			<script>
+                var serverurl = "http://q.aureliano.cc:4567";
+                function Register()
+                {
+                    password = $("#register_password_input").val();
+                    password_again = $("#register_password_again_input").val();
+                    username = $("#register_username_input").val();
+                    email = $("#register_email_input").val();
+                    //alert($.sha256(email,password,"Lino"));
+                    var matcher  = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
+                    if (!matcher.test(email))
+                    {
+                        $.alert("邮箱格式错误");
+                        return ;
+                    }
+                    if (password != password_again)
+                    {
+                        $.alert("两次输入密码不一致");
+                        return ;
+                    }
+                    else
+                    {
+                        $.ajax(
+                            {xhrFields: {
+                                withCredentials: true
+                            },
+                                type:'POST',
+                                url:serverurl+"/users",
+                                data: JSON.stringify({
+                                    "user":
+                                        {
+
+                                            "others":{
+                                                "sex":$("#sex_selection").val(),
+                                                "description":$("#register_description").val()
+                                            },
+                                            "nickname": username,
+                                            "uid":123
+                                        },
+                                    "authinfo":
+                                        {
+                                            "mail": email,
+                                            "hashedPassword":$.sha256(email+password+"Lino")
+                                        }
+
+                                }),
+                                success:function (data, status)
+                                {
+                                    if (status=200)
+                                    {
+                                        $.alert("注册成功！接下来进入登录页面","恭喜");
+                                        //$.cookie("Login_Success",$.sha256(new Date(),email,password),{path:'/'});
+                                        window.location.href="login.html";
+                                    }
+
+
+                                },
+                                error:function(XMLHttpRequest, textStatus, errorThrown)
+                                {
+                                    if (XMLHttpRequest.status=500)
+                                        $.alert("邮箱已经被使用过!");
+                                }
+                            }
+                        );
+                    }
+                }
+			</script>
 		</div>
 	  </div>
 	</div>
