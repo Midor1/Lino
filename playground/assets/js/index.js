@@ -10,7 +10,7 @@ var serverurl = "http://q.aureliano.cc:4567";
 
 $(document).ready(function () {
     // if($.cookie("Login_Success")==null)
-    //TODO:记得改回来...现在是为了方便调试.....	
+    //TODO:记得改回来...现在是为了方便调试.....   
     //  if($.cookie("Login_Success")!=null){
     //      $.alert('登录失效,请重新登录', '遇到问题辣%>_<%!', function () {
     //         window.location.href="Login.html";
@@ -23,34 +23,34 @@ $(document).ready(function () {
 Vue.component('live_item', {
     props: ['live'], //title,begin_time,description
     template: '                             \
-	<div class="card demo-card-header-pic">\
-	 <div valign="bottom" class="card-header color-white no-border no-padding">\
+    <div class="card demo-card-header-pic">\
+     <div valign="bottom" class="card-header color-white no-border no-padding">\
               <img class="card-cover" :src="live.coverpath" alt="">\
               </div>\
-		<div style="background-image:url()" valign="bottom" class="card-header color-white no-border">\
-			{{live.title}}\
-		</div>\
-		<div class="card-content">\
-			<div class="card-content-inner">\
-				<p class="color-gray">开始于{{live.begin_time}}</p>\
-				<p>持续时间为{{live.last_time}}</p>\
-				<p>{{live.description}}</p>\
-			</div>\
-		</div>\
-		<div class="card-footer">\
-		<div>\
-		    <div style="display:inline-block"> \
-			<a href="#" class="link" onclick="Like()">赞</a>\
-			</div>\
-			<div style="display:inline-block"> \
-			<p>{{live.likeamount}}</p>\
-			</div>\
-			</div>\
-			<a href="#" class="link" onclick="More()">更多</a>\
-		</div>\
-	</div>'
+        <div style="background-image:url()" valign="bottom" class="card-header color-white no-border">\
+            {{live.title}}\
+        </div>\
+        <div class="card-content">\
+            <div class="card-content-inner">\
+                <p class="color-gray">开始于{{live.begin_time}}</p>\
+                <p>持续时间为{{live.last_time}}</p>\
+                <p>{{live.description}}</p>\
+            </div>\
+        </div>\
+        <div class="card-footer">\
+        <div>\
+            <div style="display:inline-block"> \
+            <a href="#" class="link" onclick="Like()">赞</a>\
+            </div>\
+            <div style="display:inline-block"> \
+            <p>{{live.likeamount}}</p>\
+            </div>\
+            </div>\
+            <a href="#" class="link" onclick="More()">更多</a>\
+        </div>\
+    </div>'
 });
-var likeamount_tmp;
+
 var LiveList = new Vue({
     el: '#Live_List',
     data: {
@@ -124,26 +124,108 @@ var LiveList = new Vue({
         }
         this.Init();
     }
-})
+});
 
-var form = document.forms.namedItem("fileinfo");
-form.addEventListener('submit', function(ev) {
-    //TODO:Bind image with DOM Objects(Waiting for Get Avatar API Implementation)
-    var oOutput = document.querySelector("div"),
-        oData = new FormData(form);
-    var oReq = new XMLHttpRequest();
-    oReq.open("POST", serverurl + "/files", true);
-    oReq.onload = function(oEvent) {
-        if (oReq.status == 200) {
-            oOutput.innerHTML = "Uploaded!";
-        } else {
-            oOutput.innerHTML = "Error " + oReq.status + " occurred when trying to upload your file.<br \/>";
-        }
+function postRawFile() {
+    //this function does an HTTP POST to the remote URL with the raw content as the body
+    //file      :   File object, usually obtained in the way like $('#fileinput').files[0]
+    //settings  :   jQuery XHR settings object, refer to https://api.jquery.com/jquery.ajax/#jQuery-ajax-settings for more information.
+    //              Attention that this function overwrites type, contentType, data and processData in settings
+    var reader = new FileReader();
+    var files = $('input[name="file"]').prop('files');
+    alert(files[0].name);
+    reader.onload = function(){
+        $.ajax({
+            type:'POST',
+            xhrFields:
+                {
+                    withCredentials: true
+                },
+            contentType:'application/octet-stream',
+            processData:false,
+            url: serverurl+"/files",
+            data:new Uint8Array(this.result),
+            success: function (data,status) {
+                alert(data);
+                pic = JSON.parse(data);
+                alert(pic.file.fid);
+                var others=JSON.parse(localStorage.others)
+                $.ajax({
+                    url: serverurl + "/users/" + localStorage.uid,
+                    type: 'PUT',
+                    data: JSON.stringify({
+                        "user": {
+                            "uid": localStorage.uid,
+                            "nickname" :localStorage.nickname,
+                            "others": {
+                                "description" : others.description,
+                                "sex" : others.sex,
+                                "avatar": pic.file.fid
+                            }
+                        },
+                        "password": $.sha256(localStorage.email + localStorage.password + "Lino")
+                    }),
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function (data, status) {
+                        $("#avatar-panel").attr('src',serverurl + "/files/" + pic.file.fid);
+                        $("#avatar-page").attr('src',serverurl + "/files/" + others.avatar);
+                    },
+                    error: function(data, status) {
+                        $.toast('发生了' + data.status +'错误');
+                    }
+                });
+            },
+            error: function (data,status) {
+                $.toast('发生了' + data.status +'错误');
+            }
+        });
     };
+    reader.readAsArrayBuffer(files[0]);
+}
 
-    oReq.send(oData);
-    ev.preventDefault();
-}, false);
+/*
+function Upload() {
+    var fd = new FormData($("#upload-avatar")[0]);
+    $.ajax({
+        url: serverurl + "/files",
+        type: "POST",
+        data: fd,
+        xhrFields: {
+            withCredentials: true
+        },
+        processData: false,  // 不处理数据
+        contentType: false,  // 不设置内容类型
+        success: function (data,status) {
+            alert(data);
+            pic = JSON.stringify(data);
+            alert(pic.file.fid);
+            $.ajax({
+                url: serverurl + "/users/" + localStorage.uid,
+                type: 'PUT',
+                data: JSON.stringify({
+                    "user": {
+                        "others": {
+                            "avatar": pic.file.fid
+                        }
+                    }
+                }),
+                xhrFields: {
+                    withCredentials: true
+                },
+                success: function (data, status) {
+                    $.alert("修改成功");
+                }
+            });
+        },
+        error: function (data,status) {
+            alert(data);
+            alert(status);
+        }
+    });
+}
+*/
 
 function getlike(likeurl) {
     var result = 0;
@@ -177,7 +259,6 @@ var PersonalPageLiveList = new Vue({
                 xhrFields: {
                     withCredentials: true
                 },
-                datatype: "json",
                 success: function (data, status) {
                     result = JSON.parse(data);
                     $.each(result.lives, function (index, item) {
@@ -214,20 +295,20 @@ var SearchLiveList = new Vue({
 })
 
 // function Update() {
-// 	LiveList.$data.Live_Item_List = [
-// 		{
-// 			title:"Lalala",
-// 			starttime:"2017/05/11 12:00:00",
-// 			content:"hh",
-// 			href:"http://www.baidu.com"
-// 		},
-// 		{
-// 			title:"MyGree",
-// 			starttime:"2017/05/11 12:00:00",
-// 			content:"hh",
-// 			href:"http://www.bilibili.com"
-// 		}
-// 	];
+//  LiveList.$data.Live_Item_List = [
+//      {
+//          title:"Lalala",
+//          starttime:"2017/05/11 12:00:00",
+//          content:"hh",
+//          href:"http://www.baidu.com"
+//      },
+//      {
+//          title:"MyGree",
+//          starttime:"2017/05/11 12:00:00",
+//          content:"hh",
+//          href:"http://www.bilibili.com"
+//      }
+//  ];
 // }
 function Like() {
     //title_2.title='Thank you!';
@@ -250,6 +331,9 @@ function Logout() {
             url: serverurl + "/users/auth",
             success: function (data, status) {
                 window.location.href = "index.html";
+            },
+            error: function(data,status) {
+                $.toast('发生了' + data.status +'错误');
             }
         }
     );
@@ -309,20 +393,18 @@ var PersonalPage = new Vue({
             success: function (data, status) {
                 //alert(data.user.uid);
                 list = JSON.parse(data);
-                if (status == 200) {
-                    localStorage.uid = list.user.uid;
-                    localStorage.nickname = list.user.nickname;
-                    PersonalPage.$data.nickname = list.user.nickname;
+                localStorage.uid = list.user.uid;
+                localStorage.nickname = list.user.nickname;
+                PersonalPage.$data.nickname = list.user.nickname;
 
-                    // alert(list.user.others);
-                    // alert(JSON.stringify(list.user.others));
-                    // alert(JSON.parse(list.user.others).sex);
-                    others = list.user.others;
-
-                    PersonalPage.$data.personalDescription = others.description;
-                    PersonalPage.$data.sex = others.sex;
-                } else
-                    $.alert("登录失败！");
+                // alert(list.user.others);
+                // alert(JSON.stringify(list.user.others));
+                // alert(JSON.parse(list.user.others).sex);
+                others = list.user.others;
+                $("#avatar-panel").attr('src',serverurl + "/files/" + others.avatar);
+                $("#avatar-page").attr('src',serverurl + "/files/" + others.avatar);
+                PersonalPage.$data.personalDescription = others.description;
+                PersonalPage.$data.sex = others.sex;
             }
 
         });
@@ -346,11 +428,8 @@ var PersonalPanel = new Vue({
             url: serverurl + "/users/me",
             success: function (data, status) {
                 list = JSON.parse(data);
-                if (status = 200) {
-                    PersonalPanel.$data.nickname = list.user.nickname;
-                    PersonalPage.$data.personalDescription = list.user.others.description;
-                } else
-                    ;
+                PersonalPanel.$data.nickname = list.user.nickname;
+                PersonalPage.$data.personalDescription = list.user.others.description;
             }
 
         });
