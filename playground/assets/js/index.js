@@ -118,26 +118,107 @@ var LiveList = new Vue({
         }
         this.Init();
     }
-})
+});
 
-var form = document.forms.namedItem("fileinfo");
-form.addEventListener('submit', function(ev) {
-    //TODO:Bind image with DOM Objects(Waiting for Get Avatar API Implementation)
-    var oOutput = document.querySelector("div"),
-        oData = new FormData(form);
-    var oReq = new XMLHttpRequest();
-    oReq.open("POST", serverurl + "/files", true);
-    oReq.onload = function(oEvent) {
-        if (oReq.status == 200) {
-            oOutput.innerHTML = "Uploaded!";
-        } else {
-            oOutput.innerHTML = "Error " + oReq.status + " occurred when trying to upload your file.<br \/>";
-        }
+function postRawFile() {
+    //this function does an HTTP POST to the remote URL with the raw content as the body
+    //file 		: 	File object, usually obtained in the way like $('#fileinput').files[0]
+    //settings 	: 	jQuery XHR settings object, refer to https://api.jquery.com/jquery.ajax/#jQuery-ajax-settings for more information.
+    //				Attention that this function overwrites type, contentType, data and processData in settings
+    var reader = new FileReader();
+    var files = $('input[name="file"]').prop('files');
+    alert(files[0].name);
+    reader.onload = function(){
+        $.ajax({
+            type:'POST',
+            xhrFields:
+                {
+                    withCredentials: true
+                },
+            contentType:'application/octet-stream',
+            processData:false,
+            url: serverurl+"/files",
+            data:new Uint8Array(this.result),
+            success: function (data,status) {
+                alert(data);
+                pic = JSON.parse(data);
+                alert(pic.file.fid);
+                var others=JSON.parse(localStorage.others)
+                $.ajax({
+                    url: serverurl + "/users/" + localStorage.uid,
+                    type: 'PUT',
+                    data: JSON.stringify({
+                        "user": {
+                            "uid": localStorage.uid,
+                            "nickname" :localStorage.nickname,
+                            "others": {
+                                "description" : others.description,
+                                "sex" : others.sex,
+                                "avatar": pic.file.fid
+                            }
+                        },
+                        "password": $.sha256(localStorage.email + localStorage.password + "Lino")
+                    }),
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function (data, status) {
+                        $("#avatar-panel").attr('src',serverurl + "/files/" + pic.file.fid);
+                    },
+                    error: function(data, status) {
+                        $.toast('发生了' + data.status +'错误');
+                    }
+                });
+            },
+            error: function (data,status) {
+                $.toast('发生了' + data.status +'错误');
+            }
+        });
     };
+    reader.readAsArrayBuffer(files[0]);
+}
 
-    oReq.send(oData);
-    ev.preventDefault();
-}, false);
+/*
+function Upload() {
+    var fd = new FormData($("#upload-avatar")[0]);
+    $.ajax({
+        url: serverurl + "/files",
+        type: "POST",
+        data: fd,
+        xhrFields: {
+            withCredentials: true
+        },
+        processData: false,  // 不处理数据
+        contentType: false,  // 不设置内容类型
+        success: function (data,status) {
+            alert(data);
+            pic = JSON.stringify(data);
+            alert(pic.file.fid);
+            $.ajax({
+                url: serverurl + "/users/" + localStorage.uid,
+                type: 'PUT',
+                data: JSON.stringify({
+                    "user": {
+                        "others": {
+                            "avatar": pic.file.fid
+                        }
+                    }
+                }),
+                xhrFields: {
+                    withCredentials: true
+                },
+                success: function (data, status) {
+                    $.alert("修改成功");
+                }
+            });
+        },
+        error: function (data,status) {
+            alert(data);
+            alert(status);
+        }
+    });
+}
+*/
 
 function getlike(likeurl) {
     var result = 0;
@@ -171,7 +252,6 @@ var PersonalPageLiveList = new Vue({
                 xhrFields: {
                     withCredentials: true
                 },
-                datatype: "json",
                 success: function (data, status) {
                     result = JSON.parse(data);
                     $.each(result.lives, function (index, item) {
@@ -244,6 +324,9 @@ function Logout() {
             url: serverurl + "/users/auth",
             success: function (data, status) {
                 window.location.href = "index.html";
+            },
+            error: function(data,status) {
+                $.toast('发生了' + data.status +'错误');
             }
         }
     );
@@ -303,20 +386,17 @@ var PersonalPage = new Vue({
             success: function (data, status) {
                 //alert(data.user.uid);
                 list = JSON.parse(data);
-                if (status = 200) {
-                    localStorage.uid = list.user.uid;
-                    localStorage.nickname = list.user.nickname;
-                    PersonalPage.$data.nickname = list.user.nickname;
+                localStorage.uid = list.user.uid;
+                localStorage.nickname = list.user.nickname;
+                PersonalPage.$data.nickname = list.user.nickname;
 
-                    // alert(list.user.others);
-                    // alert(JSON.stringify(list.user.others));
-                    // alert(JSON.parse(list.user.others).sex);
-                    others = list.user.others;
-
-                    PersonalPage.$data.personalDescription = others.description;
-                    PersonalPage.$data.sex = others.sex;
-                } else
-                    $.alert("登录失败！");
+                // alert(list.user.others);
+                // alert(JSON.stringify(list.user.others));
+                // alert(JSON.parse(list.user.others).sex);
+                others = list.user.others;
+                $("#avatar-panel").attr('src',serverurl + "/files/" + others.avatar);
+                PersonalPage.$data.personalDescription = others.description;
+                PersonalPage.$data.sex = others.sex;
             }
 
         });
@@ -340,11 +420,8 @@ var PersonalPanel = new Vue({
             url: serverurl + "/users/me",
             success: function (data, status) {
                 list = JSON.parse(data);
-                if (status = 200) {
-                    PersonalPanel.$data.nickname = list.user.nickname;
-                    PersonalPage.$data.personalDescription = list.user.others.description;
-                } else
-                    ;
+                PersonalPanel.$data.nickname = list.user.nickname;
+                PersonalPage.$data.personalDescription = list.user.others.description;
             }
 
         });

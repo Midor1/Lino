@@ -144,9 +144,11 @@ crossorigin="anonymous"></script>
       </div>
     </div>
   </div>
-  <div class="content-block" id="Search_Live_List" >
-            <live_item v-for="(item,index) in Live_Item_List" :key="index" v-bind:index="index" v-bind:Live="item" @click.native="OnListItemClick(item)"></Live_Item>
-        </div>
+  <div class="content">
+    <div class="content-block" id="Search_Live_List" >
+      <live_item v-for="(item,index) in Live_Item_List" :key="index" v-bind:index="index" v-bind:Live="item" @click.native="OnListItemClick(item)"></Live_Item>
+    </div>
+  </div>
 </div>
 <div id="page-settings" class="page page-settings">
   <header class="bar bar-nav">
@@ -241,7 +243,7 @@ crossorigin="anonymous"></script>
 </div>
 <div class="panel panel-left panel-reveal theme-dark" id="panel-logged">
   <div class="content-block">
-    <div class="item-media"><img src="http://main-pics.oss-cn-hangzhou.aliyuncs.com/hcj.jpg" width="90"></div>
+    <div class="item-media"><img id="avatar-panel" src="http://main-pics.oss-cn-hangzhou.aliyuncs.com/hcj.jpg" width="90"></div>
     <div class="item-inner">
       <div class="item-title-row">
         <div class="item-title" id="check-name">{{nickname}}</div>
@@ -258,10 +260,10 @@ crossorigin="anonymous"></script>
           <div class="item-media">更改头像</div>
           <div class="item-inner">
             <div class="item-input">
-                <form name="fileinfo" enctype="multipart/form-data">
+
                   <input type="file" id="dmg" name="file" required>
-                  <input type="submit" value="确认修改！" />
-                </form>
+                  <button onclick="postRawFile()">提交</button>
+
             </div>
           </div>
         </div>
