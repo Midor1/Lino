@@ -303,7 +303,7 @@ var PersonalPage = new Vue({
             success: function (data, status) {
                 //alert(data.user.uid);
                 list = JSON.parse(data);
-                if (status = 200) {
+                if (status == 200) {
                     localStorage.uid = list.user.uid;
                     localStorage.nickname = list.user.nickname;
                     PersonalPage.$data.nickname = list.user.nickname;
