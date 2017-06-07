@@ -109,12 +109,18 @@ var LiveList = new Vue({
                     success:function (data, status)
                     {
                         $("#panel-left").remove();
+                    },
+                    error:function (data,status) {
+                        $.toast("出于安全考虑，请重新登录");
+                        Logout();
                     }
                 }
             );
         }
         else {
             $("#panel-logged").remove();
+            $("#nav-me").remove();
+            $("#logout-btn").remove();
         }
         this.Init();
     }
@@ -545,4 +551,11 @@ function startSearch() {
 
         }
     });
+}
+
+function checkit(isChecked) {
+    if(isChecked)
+        $(document.body)['addClass']('theme-dark');
+    else
+        $(document.body)['removeClass']('theme-dark');
 }
