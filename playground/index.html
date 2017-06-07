@@ -10,6 +10,7 @@
 integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
 crossorigin="anonymous"></script>
 <script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script>$.config={autoInit:true}</script>
 <link href="https://cdn.bootcss.com/light7/0.4.3/css/light7-swipeout.css" rel="stylesheet">
 <link href="https://cdn.bootcss.com/light7/0.4.3/css/light7-swiper.css" rel="stylesheet">
 <link href="https://cdn.bootcss.com/light7/0.4.3/css/light7.css" rel="stylesheet">
@@ -77,7 +78,7 @@ crossorigin="anonymous"></script>
         <ul>
           <li>
             <div class="item-content">
-              <div class="item-media"><img src="http://main-pics.oss-cn-hangzhou.aliyuncs.com/hcj.jpg" width="80"></div>
+              <div class="item-media"><img id="avatar-page" src="http://main-pics.oss-cn-hangzhou.aliyuncs.com/hcj.jpg" width="80"></div>
               <div class="item-inner">
                 <div class="item-title-row">
                   <div class="item-title">{{nickname}}</div>
@@ -123,8 +124,8 @@ crossorigin="anonymous"></script>
       </div>
       <div class="content-block-title">往期图文直播</div>
 	  <div class="content-block" id="PersonalPage_Live_List" >
-            <live_item v-for="(item,index) in Live_Item_List" :key="index" v-bind:index="index" v-bind:Live="item" @click.native="OnListItemClick(item)"></Live_Item>
-        </div>
+        <live_item v-for="(item,index) in Live_Item_List" :key="index" v-bind:index="index" v-bind:Live="item" @click.native="OnListItemClick(item)"></Live_Item>
+      </div>
     </div>
   </div>
 </div>
@@ -144,9 +145,11 @@ crossorigin="anonymous"></script>
       </div>
     </div>
   </div>
-  <div class="content-block" id="Search_Live_List" >
-            <live_item v-for="(item,index) in Live_Item_List" :key="index" v-bind:index="index" v-bind:Live="item" @click.native="OnListItemClick(item)"></Live_Item>
-        </div>
+  <div class="content">
+    <div class="content-block" id="Search_Live_List" >
+      <live_item v-for="(item,index) in Live_Item_List" :key="index" v-bind:index="index" v-bind:Live="item" @click.native="OnListItemClick(item)"></Live_Item>
+    </div>
+  </div>
 </div>
 <div id="page-settings" class="page page-settings">
   <header class="bar bar-nav">
@@ -241,7 +244,7 @@ crossorigin="anonymous"></script>
 </div>
 <div class="panel panel-left panel-reveal theme-dark" id="panel-logged">
   <div class="content-block">
-    <div class="item-media"><img src="http://main-pics.oss-cn-hangzhou.aliyuncs.com/hcj.jpg" width="90"></div>
+    <div class="item-media"><img id="avatar-panel" src="http://main-pics.oss-cn-hangzhou.aliyuncs.com/hcj.jpg" width="90"></div>
     <div class="item-inner">
       <div class="item-title-row">
         <div class="item-title" id="check-name">{{nickname}}</div>
@@ -258,14 +261,36 @@ crossorigin="anonymous"></script>
           <div class="item-media">更改头像</div>
           <div class="item-inner">
             <div class="item-input">
-                <form name="fileinfo" enctype="multipart/form-data">
+
                   <input type="file" id="dmg" name="file" required>
-                  <input type="submit" value="确认修改！" />
-                </form>
+                  <button onclick="postRawFile()">提交</button>
+
             </div>
           </div>
         </div>
       </li>
+    <li>
+      <div class="item-content">
+        <div class="item-inner">
+          <div class="item-title label" style="width: 60%;">夜间主题</div>
+          <div class="item-input">
+            <label class="label-switch">
+              <input type="checkbox" id="dark-switch" onclick="checkit(this.checked)">
+              <div class="checkbox"></div>
+              <script>
+                  function checkit(isChecked) {
+                  if(isChecked)
+                      $(document.body)['addClass']('theme-dark');
+                  else
+                      $(document.body)['removeClass']('theme-dark');
+                  }
+              </script>
+            </label>
+          </div>
+        </div>
+      </div>
+
+    </li>
     </ul>
   </div>
   <div class="content-block">
