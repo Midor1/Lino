@@ -38,26 +38,19 @@
     </div>
     <div class="tabs"  id="messagebox" onload="HostOnlyMode()">
       <div id="tab-all" class="tab active">
-        <message_item v-for="(item,index) in message_list" :key="index" v-bind:index="index" v-bind:message="item"></message_item>
-        
-        <nav class="bar bar-tab">
-  <a class="tab-item open-popup" data-popup="#post_img" herf="#">
-    <span class="icon icon-picture"></span>
-    <span class=tab-label >发送图片</span>
-    
-  </a>
-  
-  <a class="tab-item open-popup" data-popup="#write_sth">
-    <span class="icon icon-edit"></span>
-    <span class=tab-label>发送文字</span>
-  </a>
-</nav>
+        <message_item v-for="(item,index) in message_list" :key="index" v-bind:index="index" v-bind:message="item" ></message_item>
 
       </div>
        <div id="tab-host" class="tab">
-        <message_item v-for="(item,index) in message_list" :key="index" v-bind:index="index" v-bind:message="item"></message_item>
+        <message_item v-for="(item,index) in message_list" :key="index" v-bind:index="index" v-bind:message="item" ></message_item>
         
-        <nav class="bar bar-tab">
+     
+
+      </div>
+    </div>
+
+  </div>
+     <nav class="bar bar-tab ">
   <a class="tab-item open-popup" data-popup="#post_img" herf="#">
     <span class="icon icon-picture"></span>
     <span class=tab-label>发送图片</span>
@@ -68,11 +61,6 @@
     <span class=tab-label>发送文字</span>
   </a>
 </nav>
-
-      </div>
-    </div>
-
-  </div>
 </div>
 <div class="popup popup-reply" id="reply">
   <div class="content-block" >

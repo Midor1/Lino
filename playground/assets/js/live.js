@@ -7,6 +7,13 @@ var father2child = {};
 var socket = new WebSocket('ws://' + serverurl + "/lives/" + getlid() + "/thread");
 Vue.component('message_item', {
 	props: ["message"],
+             computed:
+             {
+                     istext:function()
+                     {
+                     	return this.message.content_type=="text";
+                     }
+             },
 	template: '\
      <div class="card facebook-card host-card">\
           <div class="card-header no-border">\
@@ -15,7 +22,8 @@ Vue.component('message_item', {
             <div class="facebook-date">{{message.time}}</div>\
           </div>\
           <div class="card-content">\
-            <div class="card-content-inner">{{message.content}}</div>\
+            <div class="card-content-inner" v-if="istext">{{message.content}}</div>\
+              <div class = "card-content-inner" v-else><img :src="message.content"></img></div>\
           </div>\
           <div class="card-footer no-border visible_controll">\
             <a href="#" class="open-popup open-reply " data-popup="#reply">评论<bdo>&nbsp;{{message.likeamount}}</bdo></a>\
@@ -27,6 +35,13 @@ Vue.component('message_item', {
 });
 Vue.component('reply_item', {
 	props: ["reply"],
+	computed:
+             {
+                     istext:function()
+                     {
+                     	return this.reply.content_type=="text";
+                     }
+             },
 	template: '        <li>\
           <div class="item-content">\
             <div class="item-media"><img :src="reply.avatarimg" width="44"></div>\
@@ -34,19 +49,28 @@ Vue.component('reply_item', {
               <div class="item-title-row">\
                 <div class="item-title">{{reply.nickname}}</div>\
               </div>\
-              <div class="item-text">{{reply.content}}</div>\
+              <div class="item-text" v-if="istext">{{reply.content}}</div>\
+              <div  v-else><img :src="reply.content"></img></div>\
             </div>\
           </div>\
         </li>'
 });
-
+function additem_single(item,list)
+{
+	try {
+             	jsonItem=JSON.parse(item);
+             } catch(e) {
+             	jsonItem=item;
+             } 
+	list.push(item);
+}
 function addItem_general(items, list) {
 	if (items.length == undefined) {
-		list.push(items);
+		additem_single(items,list)
 	} else {
 		$.each(items, function(index, item) {
 			//TODO:Time sequence problems of network
-			list.push(item);
+			additem_single(items,list)
 		})
 	}
 }
@@ -59,13 +83,37 @@ var message_list_provider = new Vue({
 	methods: {
 		getAllList: function() {
 			this.$data.message_list = [];
-			this.message_list.push({
+			additem_single({
+				"hostname": "hcj",
+				"time": new Date().toLocaleString(),
+				"content": "http://i4.buimg.com/595334/f50f5535224d3845.jpg",
+                                                   "avatarimg":"http://i4.buimg.com/595334/f50f5535224d3845.jpg",
+                                                   "reply_to":"",
+                                                   "content_type":"img",
+                                                   "istext":"false"
+                                                  
+			},this.message_list);
+			additem_single({
 				"hostname": "hcj",
 				"time": new Date().toLocaleString(),
 				"content": "Hello World!",
                                                    "avatarimg":"http://i4.buimg.com/595334/f50f5535224d3845.jpg",
-                                                   "reply_to":""
-			})
+                                                   "reply_to":"",
+                                                   "content_type":"text",
+                                                  "istext":"true"
+			},this.message_list);
+			additem_single({
+				"hostname": "hcj",
+				"time": new Date().toLocaleString(),
+				"content": "Hello World!",
+                                                   "avatarimg":"http://i4.buimg.com/595334/f50f5535224d3845.jpg",
+                                                   "reply_to":"",
+                                                   "content_type":"text",
+                                                  "istext":"true"
+                                                  
+			},this.message_list);
+
+			
 		},
 		getHostOnlyList: function() {
 			this.$data.message_list = [];
@@ -88,11 +136,21 @@ var replylist_provider = new Vue({
 	methods: {
 		getReplyList: function(lid) {
 			this.reply_list = [];
-			this.reply_list.push({
+			
+			additem_single({
 				"avatarimg": "https://imgsa.baidu.com/forum/w%3D580%3B/sign=b1b9b348f7faaf5184e381b7bc6f95ee/4034970a304e251fea68ff96ad86c9177e3e53c4.jpg",
 				"nickname": "hhh",
-				"content": "Hello World!"
-			})
+				"content": "Hello World!",
+				"content_type":"text",
+
+			},this.reply_list);
+			additem_single({
+				"avatarimg": "https://imgsa.baidu.com/forum/w%3D580%3B/sign=b1b9b348f7faaf5184e381b7bc6f95ee/4034970a304e251fea68ff96ad86c9177e3e53c4.jpg",
+				"nickname": "hhh",
+				"content": "https://imgsa.baidu.com/forum/w%3D580%3B/sign=b1b9b348f7faaf5184e381b7bc6f95ee/4034970a304e251fea68ff96ad86c9177e3e53c4.jpg",
+				"content_type":"img",
+				
+			},this.reply_list);
 		},
 		addItem: function(items) {
 			
