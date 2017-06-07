@@ -41,9 +41,10 @@
         <message_item v-for="(item,index) in message_list" :key="index" v-bind:index="index" v-bind:message="item"></message_item>
         
         <nav class="bar bar-tab">
-  <a class="tab-item" herf="#">
+  <a class="tab-item open-popup" data-popup="#post_img" herf="#">
     <span class="icon icon-picture"></span>
-    <span class=tab-label>发送图片</span>
+    <span class=tab-label >发送图片</span>
+    
   </a>
   
   <a class="tab-item open-popup" data-popup="#write_sth">
@@ -57,7 +58,7 @@
         <message_item v-for="(item,index) in message_list" :key="index" v-bind:index="index" v-bind:message="item"></message_item>
         
         <nav class="bar bar-tab">
-  <a class="tab-item" herf="#">
+  <a class="tab-item open-popup" data-popup="#post_img" herf="#">
     <span class="icon icon-picture"></span>
     <span class=tab-label>发送图片</span>
   </a>
@@ -111,6 +112,39 @@
     <div class="row">
       <div class="col-50"><a href="#" class=" button button-big button-fill button-danger close-popup">Cancel</a></div>
       <div class="col-50"><a href="#" class="button button-big button-fill button-success">Submit</a></div>
+    </div>
+  </div>
+ </div>
+ </div>
+ <div class="popup" id="post_img">
+ <div class="content" >
+ <div class="list-block">
+ <ul>
+      <li class="align-top">
+        <div class="item-content">
+          <div class="item-media"><i class="icon icon-form-comment"></i></div>
+          <div class="item-inner">
+          
+            <div class="item-title label">发布图片评论</div>
+            
+          </div>
+        </div>
+      </li>
+      <li >
+      <div class="item-content" >
+        <div class="item-input">
+             <input type="file" id="dmg" name="file" required>
+                 
+
+            </div>
+            </div>
+      </li>
+ </ul>
+ </div>
+  <div class="content-block">
+    <div class="row">
+      <div class="col-50"><a href="#" class=" button button-big button-fill button-danger close-popup">Cancel</a></div>
+      <div class="col-50"><a href="#" class="button button-big button-fill button-success" onclick="postImg()">Submit</a></div>
     </div>
   </div>
  </div>
