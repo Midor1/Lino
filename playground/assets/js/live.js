@@ -9,7 +9,7 @@ Vue.component('message_item', {
 	template: '\
      <div class="card facebook-card host-card">\
           <div class="card-header no-border">\
-            <div class="facebook-avatar"><img src="http://i4.buimg.com/595334/f50f5535224d3845.jpg" width="34" height="34"></div>\
+            <div class="facebook-avatar"><img :src="message.avatarimg" width="34" height="34"></div>\
             <div class="facebook-name">{{message.hostname}}</div>\
             <div class="facebook-date">{{message.time}}</div>\
           </div>\
@@ -59,10 +59,10 @@ var message_list_provider = new Vue({
 		getAllList: function() {
 			this.$data.message_list = [];
 			this.message_list.push({
-				hostname: "hcj",
-				time: new Date().toLocaleString(),
-				content: "Hello World!"
-
+				"hostname": "hcj",
+				"time": new Date().toLocaleString(),
+				"content": "Hello World!",
+                                                   "avatarimg":"http://i4.buimg.com/595334/f50f5535224d3845.jpg"
 			})
 		},
 		getHostOnlyList: function() {
@@ -139,4 +139,69 @@ function AllMode() {
 function HostOnlyMode() {
    Mode = 1;
    $(".visible_controll").hide();
+}
+function postRawFile() {
+    //this function does an HTTP POST to the remote URL with the raw content as the body
+    //file 		: 	File object, usually obtained in the way like $('#fileinput').files[0]
+    //settings 	: 	jQuery XHR settings object, refer to https://api.jquery.com/jquery.ajax/#jQuery-ajax-settings for more information.
+    //				Attention that this function overwrites type, contentType, data and processData in settings
+    var reader = new FileReader();
+    var files = $('input[name="file"]').prop('files');
+    alert(files[0].name);
+    reader.onload = function(){
+        $.ajax({
+            type:'POST',
+            xhrFields:
+                {
+                    withCredentials: true
+                },
+            contentType:'application/octet-stream',
+            processData:false,
+            url: serverurl+"/files",
+            data:new Uint8Array(this.result),
+            success: function (data,status) {
+                alert(data);
+                pic = JSON.parse(data);
+                alert(pic.file.fid);
+                var others=JSON.parse(localStorage.others)
+                $.ajax({
+                    url: serverurl + "/users/" + localStorage.uid,
+                    type: 'PUT',
+                    data: JSON.stringify({
+                        "user": {
+                            "uid": localStorage.uid,
+                            "nickname" :localStorage.nickname,
+                            "others": {
+                                "description" : others.description,
+                                "sex" : others.sex,
+                                "avatar": pic.file.fid
+                            }
+                        },
+                        "password": $.sha256(localStorage.email + localStorage.password + "Lino")
+                    }),
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function (data, status) {
+                        $("#avatar-panel").attr('src',serverurl + "/files/" + pic.file.fid);
+                        $("#avatar-page").attr('src',serverurl + "/files/" + others.avatar);
+                    },
+                    error: function(data, status) {
+                        $.toast('发生了' + data.status +'错误');
+                    }
+                });
+            },
+            error: function (data,status) {
+                $.toast('发生了' + data.status +'错误');
+            }
+        });
+    };
+    reader.readAsArrayBuffer(files[0]);
+}
+function postImg()
+{
+	postRawFile();
+	var file = $("#dmg") 
+	file.after(file.clone().val("")); 
+	file.remove(); 
 }
