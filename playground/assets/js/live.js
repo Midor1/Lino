@@ -2,7 +2,8 @@ var serverurl = "q.aureliano.cc:4567";
 var Mode = 0;
 //0-all,1-hostonly
 var Listcache = [];
-
+var child2father = {};
+var father2child = {};
 var socket = new WebSocket('ws://' + serverurl + "/lives/" + getlid() + "/thread");
 Vue.component('message_item', {
 	props: ["message"],
@@ -62,7 +63,8 @@ var message_list_provider = new Vue({
 				"hostname": "hcj",
 				"time": new Date().toLocaleString(),
 				"content": "Hello World!",
-                                                   "avatarimg":"http://i4.buimg.com/595334/f50f5535224d3845.jpg"
+                                                   "avatarimg":"http://i4.buimg.com/595334/f50f5535224d3845.jpg",
+                                                   "reply_to":""
 			})
 		},
 		getHostOnlyList: function() {
