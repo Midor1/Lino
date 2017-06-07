@@ -30,19 +30,19 @@ crossorigin="anonymous"></script>
 
 <body>
 <nav class="bar bar-tab">
-<a class="tab-item active" href="#page-home">
+<a class="tab-item replace no-transition active" href="#page-home">
   <span class="icon icon-home"></span>
   <span class="tab-label">首页</span>
 </a>
-<a class="tab-item" href="#page-me">
+<a id="nav-me" class="tab-item replace no-transition" href="#page-me">
   <span class="icon icon-me"></span>
   <span class="tab-label">我</span>
 </a>
-<a class="tab-item" href="#page-search">
+<a class="tab-item replace no-transition" href="#page-search">
   <span class="icon icon-search"></span>
   <span class="tab-label">搜索</span>
 </a>
-<a class="tab-item" href="#page-settings">
+<a class="tab-item replace no-transition" href="#page-settings">
   <span class="icon icon-settings"></span>
   <span class="tab-label">设置</span>
 </a>
@@ -195,7 +195,7 @@ crossorigin="anonymous"></script>
         </ul>
       </div>
       <div class="content-block">
-        <a onclick="Logout()" class="button button-big button-fill button-danger external">注销</a>
+        <a onclick="Logout()" id="logout-btn" class="button button-big button-fill button-danger external">注销</a>
       </div>
     </div>
   </div>
@@ -277,14 +277,6 @@ crossorigin="anonymous"></script>
             <label class="label-switch">
               <input type="checkbox" id="dark-switch" onclick="checkit(this.checked)">
               <div class="checkbox"></div>
-              <script>
-                  function checkit(isChecked) {
-                  if(isChecked)
-                      $(document.body)['addClass']('theme-dark');
-                  else
-                      $(document.body)['removeClass']('theme-dark');
-                  }
-              </script>
             </label>
           </div>
         </div>

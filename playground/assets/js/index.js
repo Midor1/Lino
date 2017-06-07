@@ -10,7 +10,7 @@ var serverurl = "http://q.aureliano.cc:4567";
 
 $(document).ready(function () {
     // if($.cookie("Login_Success")==null)
-    //TODO:记得改回来...现在是为了方便调试.....	
+    //TODO:记得改回来...现在是为了方便调试.....   
     //  if($.cookie("Login_Success")!=null){
     //      $.alert('登录失效,请重新登录', '遇到问题辣%>_<%!', function () {
     //         window.location.href="Login.html";
@@ -23,32 +23,32 @@ $(document).ready(function () {
 Vue.component('live_item', {
     props: ['live'], //title,begin_time,description
     template: '                             \
-	<div class="card demo-card-header-pic">\
-	 <div valign="bottom" class="card-header color-white no-border no-padding">\
+    <div class="card demo-card-header-pic">\
+     <div valign="bottom" class="card-header color-white no-border no-padding">\
               <img class="card-cover" :src="live.coverpath" alt="">\
               </div>\
-		<div style="background-image:url()" valign="bottom" class="card-header color-white no-border">\
-			{{live.title}}\
-		</div>\
-		<div class="card-content">\
-			<div class="card-content-inner">\
-				<p class="color-gray">开始于{{live.begin_time}}</p>\
-				<p>持续时间为{{live.last_time}}</p>\
-				<p>{{live.description}}</p>\
-			</div>\
-		</div>\
-		<div class="card-footer">\
-		<div>\
-		    <div style="display:inline-block"> \
-			<a href="#" class="link" onclick="Like()">赞</a>\
-			</div>\
-			<div style="display:inline-block"> \
-			<p>{{live.likeamount}}</p>\
-			</div>\
-			</div>\
-			<a href="#" class="link" onclick="More()">更多</a>\
-		</div>\
-	</div>'
+        <div style="background-image:url()" valign="bottom" class="card-header color-white no-border">\
+            {{live.title}}\
+        </div>\
+        <div class="card-content">\
+            <div class="card-content-inner">\
+                <p class="color-gray">开始于{{live.begin_time}}</p>\
+                <p>持续时间为{{live.last_time}}</p>\
+                <p>{{live.description}}</p>\
+            </div>\
+        </div>\
+        <div class="card-footer">\
+        <div>\
+            <div style="display:inline-block"> \
+            <a href="#" class="link" onclick="Like()">赞</a>\
+            </div>\
+            <div style="display:inline-block"> \
+            <p>{{live.likeamount}}</p>\
+            </div>\
+            </div>\
+            <a href="#" class="link" onclick="More()">更多</a>\
+        </div>\
+    </div>'
 });
 
 var LiveList = new Vue({
@@ -109,12 +109,18 @@ var LiveList = new Vue({
                     success:function (data, status)
                     {
                         $("#panel-left").remove();
+                    },
+                    error:function (data,status) {
+                        $.toast("出于安全考虑，请重新登录");
+                        Logout();
                     }
                 }
             );
         }
         else {
             $("#panel-logged").remove();
+            $("#nav-me").remove();
+            $("#logout-btn").remove();
         }
         this.Init();
     }
@@ -122,9 +128,9 @@ var LiveList = new Vue({
 
 function postRawFile() {
     //this function does an HTTP POST to the remote URL with the raw content as the body
-    //file 		: 	File object, usually obtained in the way like $('#fileinput').files[0]
-    //settings 	: 	jQuery XHR settings object, refer to https://api.jquery.com/jquery.ajax/#jQuery-ajax-settings for more information.
-    //				Attention that this function overwrites type, contentType, data and processData in settings
+    //file      :   File object, usually obtained in the way like $('#fileinput').files[0]
+    //settings  :   jQuery XHR settings object, refer to https://api.jquery.com/jquery.ajax/#jQuery-ajax-settings for more information.
+    //              Attention that this function overwrites type, contentType, data and processData in settings
     var reader = new FileReader();
     var files = $('input[name="file"]').prop('files');
     alert(files[0].name);
@@ -289,20 +295,20 @@ var SearchLiveList = new Vue({
 })
 
 // function Update() {
-// 	LiveList.$data.Live_Item_List = [
-// 		{
-// 			title:"Lalala",
-// 			starttime:"2017/05/11 12:00:00",
-// 			content:"hh",
-// 			href:"http://www.baidu.com"
-// 		},
-// 		{
-// 			title:"MyGree",
-// 			starttime:"2017/05/11 12:00:00",
-// 			content:"hh",
-// 			href:"http://www.bilibili.com"
-// 		}
-// 	];
+//  LiveList.$data.Live_Item_List = [
+//      {
+//          title:"Lalala",
+//          starttime:"2017/05/11 12:00:00",
+//          content:"hh",
+//          href:"http://www.baidu.com"
+//      },
+//      {
+//          title:"MyGree",
+//          starttime:"2017/05/11 12:00:00",
+//          content:"hh",
+//          href:"http://www.bilibili.com"
+//      }
+//  ];
 // }
 function Like() {
     //title_2.title='Thank you!';
@@ -545,4 +551,11 @@ function startSearch() {
 
         }
     });
+}
+
+function checkit(isChecked) {
+    if(isChecked)
+        $(document.body)['addClass']('theme-dark');
+    else
+        $(document.body)['removeClass']('theme-dark');
 }
