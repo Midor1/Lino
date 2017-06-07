@@ -41,7 +41,7 @@ Vue.component('reply_item', {
 
 function addItem_general(items, list) {
 	if (items.length == undefined) {
-		list.$data.message_list.push(items);
+		list.push(items);
 	} else {
 		$.each(items, function(index, item) {
 			//TODO:Time sequence problems of network
