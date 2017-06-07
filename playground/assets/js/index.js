@@ -50,7 +50,7 @@ Vue.component('live_item', {
 		</div>\
 	</div>'
 });
-var likeamount_tmp;
+
 var LiveList = new Vue({
     el: '#Live_List',
     data: {
@@ -164,6 +164,7 @@ function postRawFile() {
                     },
                     success: function (data, status) {
                         $("#avatar-panel").attr('src',serverurl + "/files/" + pic.file.fid);
+                        $("#avatar-page").attr('src',serverurl + "/files/" + others.avatar);
                     },
                     error: function(data, status) {
                         $.toast('发生了' + data.status +'错误');
@@ -395,6 +396,7 @@ var PersonalPage = new Vue({
                 // alert(JSON.parse(list.user.others).sex);
                 others = list.user.others;
                 $("#avatar-panel").attr('src',serverurl + "/files/" + others.avatar);
+                $("#avatar-page").attr('src',serverurl + "/files/" + others.avatar);
                 PersonalPage.$data.personalDescription = others.description;
                 PersonalPage.$data.sex = others.sex;
             }
