@@ -1,0 +1,120 @@
+<!doctype html>
+<html class="pixel-ratio-1">
+<head>
+  <meta charset="utf-8">
+  <title>水木书荟</title>
+  <script src="https://code.jquery.com/jquery-3.2.1.js"
+          integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+          crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
+          integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
+          crossorigin="anonymous"></script>
+          <link  rel="stylesheet" href="assets/css/border_blue_light_focus.css" type="text/css">
+  <link href="https://cdn.bootcss.com/light7/0.4.3/css/light7-swipeout.css" rel="stylesheet">
+  
+  <link href="https://cdn.bootcss.com/light7/0.4.3/css/light7-swiper.css" rel="stylesheet">
+  <link href="https://cdn.bootcss.com/light7/0.4.3/css/light7.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/light7/0.4.3/js/light7-swipeout.js"></script>
+  <script src="https://cdn.bootcss.com/light7/0.4.3/js/light7-swiper.js"></script>
+  <script src="https://cdn.bootcss.com/light7/0.4.3/js/light7.js"></script>
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="//static.hdslb.com/images/favicon.ico">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="Access-Control-Allow-Origin" content="*">
+</head>
+<body>
+<div id="page-live" class="page page-live">
+  <header class="bar bar-nav">
+    <a class="icon icon-left pull-left" href="..\index.html"></a>
+    <a class="icon icon-settings pull-right"></a>
+    <h1 class="title">AV233333</h1>
+  </header>
+  <div class=content>
+    <div class="buttons-tab">
+      <a href="#tab-all" class="tab-link button active" onclick="AllMode()" >所有消息</a>
+      <a href="#tab-host" class="tab-link button" onclick="HostOnlyMode()">只看Po主</a>
+    </div>
+    <div class="tabs"  id="messagebox" onload="HostOnlyMode()">
+      <div id="tab-all" class="tab active">
+        <message_item v-for="(item,index) in message_list" :key="index" v-bind:index="index" v-bind:message="item"></message_item>
+        
+        <nav class="bar bar-tab">
+  <a class="tab-item" herf="#">
+    <span class="icon icon-picture"></span>
+    <span class=tab-label>发送图片</span>
+  </a>
+  
+  <a class="tab-item open-popup" data-popup="#write_sth">
+    <span class="icon icon-edit"></span>
+    <span class=tab-label>发送文字</span>
+  </a>
+</nav>
+
+      </div>
+       <div id="tab-host" class="tab">
+        <message_item v-for="(item,index) in message_list" :key="index" v-bind:index="index" v-bind:message="item"></message_item>
+        
+        <nav class="bar bar-tab">
+  <a class="tab-item" herf="#">
+    <span class="icon icon-picture"></span>
+    <span class=tab-label>发送图片</span>
+  </a>
+  
+  <a class="tab-item open-popup" data-popup="#write_sth">
+    <span class="icon icon-edit"></span>
+    <span class=tab-label>发送文字</span>
+  </a>
+</nav>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="popup popup-reply" id="reply">
+  <div class="content-block" >
+    <div class="list-block media-list" >
+      <ul >
+            <reply_item v-for="(item,index) in reply_list" :key="index" v-bind:index="index" v-bind:reply="item"></reply_item>
+      </ul>
+    </div>
+    <p><a class="icon icon-edit pull-left">评论</a><a href="#" class="close-popup pull-right">返回</a></p>
+  </div>
+</div>
+ <div class="popup" id="write_sth">
+ <div class="content" >
+ <div class="list-block">
+ <ul>
+      <li class="align-top">
+        <div class="item-content">
+          <div class="item-media"><i class="icon icon-form-comment"></i></div>
+          <div class="item-inner">
+          
+            <div class="item-title label">发布文字评论</div>
+            
+          </div>
+        </div>
+      </li>
+      <li >
+      <div class="item-content" >
+        <div class="item-input">
+              <textarea id="write_comment_content" placeholder="在这里键入您的评论内容"  style="height: 300px"></textarea>
+
+            </div>
+            </div>
+      </li>
+ </ul>
+ </div>
+  <div class="content-block">
+    <div class="row">
+      <div class="col-50"><a href="#" class=" button button-big button-fill button-danger close-popup">Cancel</a></div>
+      <div class="col-50"><a href="#" class="button button-big button-fill button-success">Submit</a></div>
+    </div>
+  </div>
+ </div>
+ </div>
+<script src="assets/js/live.js"></script>
+</body>
+</html>

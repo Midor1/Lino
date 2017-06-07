@@ -15,6 +15,7 @@
   <script src="https://cdn.bootcss.com/light7/0.4.3/js/light7-swipeout.js"></script>
   <script src="https://cdn.bootcss.com/light7/0.4.3/js/light7-swiper.js"></script>
   <script src="https://cdn.bootcss.com/light7/0.4.3/js/light7.js"></script>
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
   <link rel="shortcut icon" href="//static.hdslb.com/images/favicon.ico">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -34,25 +35,8 @@
       <a href="#tab-host" class="tab-link button">只看Po主</a>
     </div>
     <div class="tabs">
-      <div id="tab-all" class="tab active">
-        <div class="card facebook-card host-card">
-          <div class="card-header no-border">
-            <div class="facebook-avatar"><img src="http://i4.buimg.com/595334/f50f5535224d3845.jpg" width="34" height="34"></div>
-            <div class="facebook-name">hcj</div>
-            <div class="facebook-date">星期零 3:47pm</div>
-          </div>
-          <div class="card-content">
-            <div class="card-content-inner">第一话中可以看到戴安娜小时候也参加了夏莉欧的魔法表演。
-              第一话中亚可的玩偶是夏莉欧的使魔。
-              第三话中店主提到过传说流星丸的速度比喷气式飞机还快，这段情景出现在了后面部分。
-              第三话中亚可飞过了一户人家，那家人在看《地狱巡警》。
-              第三话ED画面中包括了以下正片相关信息：卢基奇教授的奖品是一罐毒蛇、流星丸的事情上了当地报纸。
-              第七话开头苏西提到的两部电影可能neta自《沼泽异形》。</div>
-          </div>
-          <div class="card-footer no-border">
-            <a href="#" class="open-popup open-reply" data-popup="#reply-1">评论<bdo>&nbsp;2</bdo></a>
-          </div>
-        </div>
+      <div id="tab-all" class="tab active" id="messagebox">
+        <message_item v-for="(item,index) in message_list" :key="index" v-bind:index="index" v-bind:message="item"></message_item>
         <div class="card facebook-card host-card">
           <div class="card-header no-border">
             <div class="facebook-avatar"><img src="http://i4.buimg.com/595334/f50f5535224d3845.jpg" width="34" height="34"></div>
@@ -118,5 +102,6 @@
     <p><a href="#" class="close-popup">返回</a></p>
   </div>
 </div>
+<script src="assets/js/live.js"></script>
 </body>
 </html>
