@@ -33,16 +33,19 @@
   </header>
   <div class=content>
     <div class="buttons-tab">
-      <a href="#tab-all" class="tab-link button active" onclick="AllMode()" >所有消息</a>
-      <a href="#tab-host" class="tab-link button" onclick="HostOnlyMode()">只看Po主</a>
+      <a href="#tab-all" class="tab-link button active" >所有消息</a>
+      <a href="#tab-host" class="tab-link button" >只看Po主</a>
     </div>
     <div class="tabs"  id="messagebox" >
       <div id="tab-all" class="tab active">
         <message_item v-for="(item,index) in message_list" :key="index" v-bind:index="index" v-bind:message="item" ></message_item>
 
       </div>
-       <div id="tab-host" class="tab">
-        <message_item v-for="(item,index) in message_list" :key="index" v-bind:index="index" v-bind:message="item" ></message_item>
+       <div id="tab-host" class="tab"> 
+      <!-- TODO: 主播的uid在localStorage.hostid，加载时间是在BODY onload的时候 -->
+   <!--     这里的message_item的v-for麻烦加个filter...实在不想写了...太累了... -->
+<!--    注意这里是message_item2...考虑两种模式：QQ群模式和只看楼主模式的显示方式可能略有不同 -->
+        <message_item2 v-for="(item,index) in message_list" :key="index" v-bind:index="index" v-bind:message="item" ></message_item2>
  
      
 
@@ -50,14 +53,15 @@
     </div>
   
   </div>
+  <!-- 下面这个nav条只有主播能看到，注意v-show条件，对应vue对象和id同名 -->
    <nav class="bar bar-tab " id="hostbar" v-show ="isHost">  
 
-  <a class="tab-item open-popup" data-popup="#post_img" herf="#">
+  <a class="tab-item open-popup" data-popup="#post_img" v-on:click="setReplyMid()">
     <span class="icon icon-picture"></span>
     <span class=tab-label>发送图片</span>
   </a>
   
-  <a class="tab-item open-popup" data-popup="#write_sth">
+  <a class="tab-item open-popup" data-popup="#write_sth" v-on:click="setReplyMid()">
     <span class="icon icon-edit"></span>
     <span class=tab-label>发送文字</span>
   </a>
@@ -72,12 +76,12 @@
       </ul>
     </div>
          <nav class="bar bar-tab ">
-  <a class="tab-item open-popup" data-popup="#post_img" herf="#">
+  <a class="tab-item open-popup" data-popup="#post_img" onclick="setReplyMid_outer()" herf="#">
     <span class="icon icon-picture"></span>
     <span class=tab-label>发送图片</span>
   </a>
   
-  <a class="tab-item open-popup" data-popup="#write_sth">
+  <a class="tab-item open-popup" data-popup="#write_sth" onclick="setReplyMid_outer()">
     <span class="icon icon-edit"></span>
     <span class=tab-label>发送文字</span>
   </a>
@@ -117,7 +121,7 @@
   <div class="content-block">
     <div class="row">
       <div class="col-50"><a href="#" class=" button button-big button-fill button-danger close-popup">Cancel</a></div>
-      <div class="col-50"><a href="#" class="button button-big button-fill button-success" onclick="createMessage()">Submit</a></div>
+      <div class="col-50"><a href="#" class="button button-big button-fill button-success" onclick="posttext()">Submit</a></div>
     </div>
   </div>
  </div>
