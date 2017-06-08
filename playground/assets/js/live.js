@@ -7,12 +7,13 @@ var father2child = {};
 //var socket = new WebSocket('ws://' + serverurl + "/lives/" + getlid() + "/thread");
 var uid = localStorage.uid;
 var hostid = 0;
-var targetid = 0;//随点击事件而更新，指定新消息的reply_to
+var targetid = 0; //随点击事件而更新，指定新消息的reply_to
 var temptargetid = 0;
 //考虑用户打开评论区后，评论完别的，还想针对这条主线消息评论，
 //为了防止该条主线消息mid丢失必须得到这个
 //关于上面两个id的测试我已经做过了
-var livepushlistener ;
+var livepushlistener;
+
 function init() {
 	$.ajax({
 		type: "GET",
@@ -72,10 +73,23 @@ Vue.component('message_item2', {
 		prepareReplylist: function(mid) {
 			replylist_provider.fillReplyList(mid);
 			temptargetid = mid;
+		},
+		popupWrite_sth: function(mid) {
+			$.popup("#write_sth");
+			targetid = mid;
+
+		},
+		popupPost_sth: function(mid) {
+			$.popup("#post_img");
+			targetid = mid;
+		},
+		prepareedit:function(mid)
+		{
+                                      targetid = mid;
 		}
 	},
 	template: '\
-     <div class="card facebook-card host-card">\
+     <div class="card facebook-card host-card open-popover" data-popover=".my-popover" v-on:click="prepareedit(message.mid)">\
           <div class="card-header no-border">\
             <div class="facebook-avatar"><img :src="message.avatarimg" width="34" height="34"></div>\
             <div class="facebook-name">{{message.hostname}}</div>\
@@ -101,12 +115,12 @@ Vue.component('reply_item', {
 
 		popupWrite_sth: function(mid) {
 			$.popup("#write_sth");
-			targetid=mid;
+			targetid = mid;
 
 		},
 		popupPost_sth: function(mid) {
 			$.popup("#post_img");
-			targetid=mid;
+			targetid = mid;
 		}
 	},
 	template: '        <li>\
@@ -246,7 +260,7 @@ var replylist_provider = new Vue({
 	data: {
 		reply_list: [],
 		latest: 0,
-		
+
 	},
 	methods: {
 		initial: function() {
@@ -317,7 +331,6 @@ function getMessages() {
 
 
 
-
 //这里的alert和头像设置的部分我就注释掉了...确认一下，pic.file.fid就是fid吧？
 //另外那个错误代码....能不能转成对应的错误信息？
 //注意：这里有所改动，因为需要发送图片，content的形式：{type:img,payload:url}
@@ -353,7 +366,7 @@ function postRawFile(ReplytoMid) {
 							"lid": getlid(),
 							"content": JSON.stringify({
 								"type": "img",
-								"payload": serverurl + "/files/"+pic.file.fid
+								"payload": serverurl + "/files/" + pic.file.fid
 							})
 						}
 
@@ -379,16 +392,17 @@ function postRawFile(ReplytoMid) {
 }
 //只要postRawFile没错就没错
 function postImg() {
-	// alert(temptargetid);
-	// alert(targetid);
+	alert(temptargetid);
+	alert(targetid);
 	postRawFile(targetid);
 	var file = $("#dmg")
 	file.after(file.clone().val(""));
 	file.remove();
 }
-function posttext(){
-	// alert(temptargetid);
-	// alert(targetid);
+
+function posttext() {
+	alert(temptargetid);
+	alert(targetid);
 	createMessage(targetid);
 }
 //已经测试
@@ -434,23 +448,24 @@ function reply_tree_construct(mid, cache) {
 function createMessage(ReplyToMid) {
 	var message = $("#write_comment_content").val();
 	$.ajax({
-			url: serverurl + "/lives/" + getlid() + "/thread",
-			xhrFields: {
-				withCredentials: true
-			},
-			type: "POST",
-			data: JSON.stringify({
-				"content": JSON.stringify({
-					"type": "text",
-					"payload": message
-				}),
-				"replyto": ReplyToMid,
-				"lid": getlid()
-
-
+		url: serverurl + "/lives/" + getlid() + "/thread",
+		xhrFields: {
+			withCredentials: true
+		},
+		type: "POST",
+		data: JSON.stringify({
+			"content": JSON.stringify({
+				"type": "text",
+				"payload": message
 			}),
-		}) 
+			"replyto": ReplyToMid,
+			"lid": getlid()
+
+
+		}),
+	})
 }
+
 function setReplyMid_outer() //targetid设为temptargetid
 {
 	targetid = temptargetid;
