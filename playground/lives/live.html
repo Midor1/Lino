@@ -1,0 +1,107 @@
+<!doctype html>
+<html class="pixel-ratio-1">
+<head>
+  <meta charset="utf-8">
+  <title>水木书荟</title>
+  <script src="https://code.jquery.com/jquery-3.2.1.js"
+          integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+          crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
+          integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
+          crossorigin="anonymous"></script>
+  <link href="https://cdn.bootcss.com/light7/0.4.3/css/light7-swipeout.css" rel="stylesheet">
+  <link href="https://cdn.bootcss.com/light7/0.4.3/css/light7-swiper.css" rel="stylesheet">
+  <link href="https://cdn.bootcss.com/light7/0.4.3/css/light7.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/light7/0.4.3/js/light7-swipeout.js"></script>
+  <script src="https://cdn.bootcss.com/light7/0.4.3/js/light7-swiper.js"></script>
+  <script src="https://cdn.bootcss.com/light7/0.4.3/js/light7.js"></script>
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="//static.hdslb.com/images/favicon.ico">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="Access-Control-Allow-Origin" content="*">
+</head>
+<body>
+<div id="page-live" class="page page-live">
+  <header class="bar bar-nav">
+    <a class="icon icon-left pull-left" href="..\index.html"></a>
+    <a class="icon icon-settings pull-right"></a>
+    <h1 class="title">AV233333</h1>
+  </header>
+  <div class=content>
+    <div class="buttons-tab">
+      <a href="#tab-all" class="tab-link button active">所有消息</a>
+      <a href="#tab-host" class="tab-link button">只看Po主</a>
+    </div>
+    <div class="tabs">
+      <div id="tab-all" class="tab active" id="messagebox">
+        <message_item v-for="(item,index) in message_list" :key="index" v-bind:index="index" v-bind:message="item"></message_item>
+        <div class="card facebook-card host-card">
+          <div class="card-header no-border">
+            <div class="facebook-avatar"><img src="http://i4.buimg.com/595334/f50f5535224d3845.jpg" width="34" height="34"></div>
+            <div class="facebook-name">hcj</div>
+            <div class="facebook-date">星期零 3:48pm</div>
+          </div>
+          <div class="card-content">
+            <div class="card-content-inner">第七话中巴朵科克老师在吃亚可的苹果前检查了一下苹果。（然而并没有什么卵用）
+              第七话中亚可变成的半鱼人造型neta了藤子F不二雄的漫画形象Q太郎，和鱼交谈时的一大段姿势neta了本家的作品KLK中的真子小剧场。
+              第七话中找家人的鱼在认笼子中的家人时对某条鱼迟疑了一下，那条鱼可能是派西斯教授变的？
+              第七话中目击到变成半鱼人的亚可的报道旁边是流星丸的目击报道。</div>
+          </div>
+          <div class="card-footer no-border">
+            <a href="#" class="open-popup open-reply" data-popup="#reply-2">评论<bdo>&nbsp;0</bdo></a>
+          </div>
+        </div>
+        <div class="bar bar-footer">
+            <a class="icon icon-edit pull-left">评论</a>
+        </div>
+
+      </div>
+      <div id="tab-host" class="tab">
+
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="popup popup-reply" id="reply-1">
+  <div class="content-block">
+    <div class="list-block media-list">
+      <ul>
+        <li>
+          <div class="item-content">
+            <div class="item-media"><img src="http://gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i3/TB10LfcHFXXXXXKXpXXXXXXXXXX_!!0-item_pic.jpg_250x250q60.jpg" width="44"></div>
+            <div class="item-inner">
+              <div class="item-title-row">
+                <div class="item-title">lslsls</div>
+              </div>
+              <div class="item-text">谢谢楼主</div>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="item-content">
+            <div class="item-media"><img src="http://gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i3/TB10LfcHFXXXXXKXpXXXXXXXXXX_!!0-item_pic.jpg_250x250q60.jpg" width="44"></div>
+            <div class="item-inner">
+              <div class="item-title-row">
+                <div class="item-title">lsls</div>
+              </div>
+              <div class="item-text">了解了</div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <p><a href="#" class="close-popup">返回</a></p>
+  </div>
+</div>
+<div class="popup popup-reply" id="reply-2">
+  <div class="content-block">
+    <p>还没有人评论，快来抢沙发吧。</p>
+    <p><a href="#" class="close-popup">返回</a></p>
+  </div>
+</div>
+<script src="assets/js/live.js"></script>
+</body>
+</html>
