@@ -14,9 +14,7 @@ var temptargetid = 0;
 //关于上面两个id的测试我已经做过了
 var livepushlistener;
 
-document.ready = function() {
 
-};
 
 window.onload = init();
 
@@ -33,6 +31,7 @@ function init() {
 			localStorage.hostid = hostid;
 		}
 	});
+	livepushlistener = new LivePushListener("ws://q.aureliano.cc:4567/websocket/lives",getlid(),message_list_provider.addItem);
 }
 
 Vue.component('message_item', {
@@ -46,6 +45,9 @@ Vue.component('message_item', {
 		prepareReplylist: function(mid) {
 			replylist_provider.fillReplyList(mid);
 			temptargetid = mid;
+		},
+		isHost: function(mid) {
+			return localStorage.hostid === mid;
 		}
 	},
 	template: '\
@@ -88,9 +90,8 @@ Vue.component('message_item2', {
 			$.popup("#post_img");
 			targetid = mid;
 		},
-		prepareedit:function(mid)
-		{
-            targetid = mid;
+		prepareedit: function(mid) {
+			targetid = mid;
 		}
 	},
 	template: '\
@@ -175,6 +176,15 @@ var message_list_provider = new Vue({
 		message_list: [],
 		latest: 0
 	},
+	computed: {
+
+		filterMessageList: function() {
+			// `this` points to the vm instance
+			return this.message_list.filter(function(item) {
+				return item.owner===localStorage.hostid;
+			});;
+		}
+	},
 	methods: {
 		initial: function() {
 			//reply_list.splice(0,reply_list.length);
@@ -186,6 +196,7 @@ var message_list_provider = new Vue({
 			additem_single({
 				"mid": "1",
 				"hostname": "hcj",
+				"owner":"201",
 				"time": new Date().toLocaleString(),
 				"content": "http://i4.buimg.com/595334/f50f5535224d3845.jpg",
 				"avatarimg": "http://i4.buimg.com/595334/f50f5535224d3845.jpg",
@@ -197,6 +208,7 @@ var message_list_provider = new Vue({
 			additem_single({
 				"mid": "2",
 				"hostname": "hcj",
+				"owner":"201",
 				"time": new Date().toLocaleString(),
 				"content": "Hello World!",
 				"avatarimg": "http://i4.buimg.com/595334/f50f5535224d3845.jpg",
@@ -207,6 +219,7 @@ var message_list_provider = new Vue({
 			additem_single({
 				"mid": "3",
 				"hostname": "hcj",
+				"owner":"0",
 				"time": new Date().toLocaleString(),
 				"content": "Hello World2!",
 				"avatarimg": "http://i4.buimg.com/595334/f50f5535224d3845.jpg",
@@ -446,5 +459,5 @@ function setReplyMid_outer() //targetid设为temptargetid
 	targetid = temptargetid;
 }
 
-if(localStorage.hostid !== localStorage.uid)
-    $("#hostbar").remove();
+if (localStorage.hostid !== localStorage.uid)
+	$("#hostbar").remove();

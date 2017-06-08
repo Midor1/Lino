@@ -16,6 +16,7 @@
     <link href="https://cdn.bootcss.com/light7/0.4.3/css/light7.css" rel="stylesheet">
     <script src="https://cdn.bootcss.com/light7/0.4.3/js/light7-swipeout.js"></script>
     <script src="https://cdn.bootcss.com/light7/0.4.3/js/light7-swiper.js"></script>
+    <script src="assets/js/LivePushListener.js"></script>
     <script src="https://cdn.bootcss.com/light7/0.4.3/js/light7.js"></script>
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
@@ -52,7 +53,7 @@
         </div>
         <div class="tabs" id="messagebox">
             <div id="tab-all" class="tab active">
-                <message_item v-for="(item,index) in message_list" :key="index" v-bind:index="index"
+                <message_item v-for="(item,index) in filterMessageList"  :key="index" v-bind:index="index"
                               v-bind:message="item"></message_item>
 
             </div>
@@ -173,5 +174,6 @@
     </div>
 </div>
 <script src="assets/js/live.js"></script>
+
 </body>
 </html>
