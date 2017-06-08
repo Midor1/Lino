@@ -20,6 +20,7 @@ $(document).ready(function () {
         $.showPreloader("请稍等一下下%>_<%\n点击可以关闭我哦");
 });
 
+
 Vue.component('live_item', {
     props: ['live'], //title,begin_time,description
     template: '                             \
@@ -133,7 +134,6 @@ function postRawFile() {
     //              Attention that this function overwrites type, contentType, data and processData in settings
     var reader = new FileReader();
     var files = $('input[name="file"]').prop('files');
-    alert(files[0].name);
     reader.onload = function(){
         $.ajax({
             type:'POST',
@@ -146,9 +146,7 @@ function postRawFile() {
             url: serverurl+"/files",
             data:new Uint8Array(this.result),
             success: function (data,status) {
-                alert(data);
                 pic = JSON.parse(data);
-                alert(pic.file.fid);
                 var others=JSON.parse(localStorage.others);
                 $.ajax({
                     url: serverurl + "/users/" + localStorage.uid,
@@ -542,8 +540,8 @@ function startSearch() {
                     begin_time: new Date(item.begin_time).toLocaleString(),
                     description: item.description,
                     last_time: formatSeconds(item.time_lasted),
-                    coverpath: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1496073561214&di=b31cb40ac5e96a0169d6a21a86e1cd83&imgtype=0&src=http%3A%2F%2Fngnews.7xz.com%2Fuploadfile%2F2016%2F0629%2F20160629092602704.jpg",
-                    //coverpath:getCover(item.cover),
+                    //coverpath: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1496073561214&di=b31cb40ac5e96a0169d6a21a86e1cd83&imgtype=0&src=http%3A%2F%2Fngnews.7xz.com%2Fuploadfile%2F2016%2F0629%2F20160629092602704.jpg",
+                    coverpath:getCover(item.cover),
                     likeamount: serverurl + "/lives/" + item.lid + "/like",
                     href: ""
                 });
@@ -559,4 +557,28 @@ function checkit(isChecked) {
         $(document.body)['addClass']('theme-dark');
     else
         $(document.body)['removeClass']('theme-dark');
+}
+
+function retrievePassword() {
+    var mail = $("#mail-re").val();
+    $.showPreloader('正在执行查询...');
+    $.ajax({
+        url: serverurl + "/users/forgot",
+        type: 'POST',
+        data: JSON.stringify({
+            "mail": mail
+            }
+        ),
+        xhrFields: {
+            withCredentials: true
+        },
+        success: function (data, status) {
+            $.hidePreloader();
+            $.alert("已发送邮件");
+        },
+        error: function (data,status) {
+            $.hidePreloader();
+            $.alert("请检查您的输入" + data.status);
+        }
+    });
 }

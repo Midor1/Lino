@@ -6,16 +6,9 @@
 <script src="https://code.jquery.com/jquery-3.2.1.js"
   integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
   crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
-integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
-crossorigin="anonymous"></script>
 <script src="https://unpkg.com/vue/dist/vue.js"></script>
 <script>$.config={autoInit:true}</script>
-<link href="https://cdn.bootcss.com/light7/0.4.3/css/light7-swipeout.css" rel="stylesheet">
-<link href="https://cdn.bootcss.com/light7/0.4.3/css/light7-swiper.css" rel="stylesheet">
 <link href="https://cdn.bootcss.com/light7/0.4.3/css/light7.css" rel="stylesheet">
-<script src="https://cdn.bootcss.com/light7/0.4.3/js/light7-swipeout.js"></script>
-<script src="https://cdn.bootcss.com/light7/0.4.3/js/light7-swiper.js"></script>
 <script src="https://cdn.bootcss.com/light7/0.4.3/js/light7.js"></script>
 
 <meta name="viewport" content="initial-scale=1, maximum-scale=1">
@@ -121,14 +114,7 @@ crossorigin="anonymous"></script>
             </div>
           </li>
         </ul>
-        <ul>
-          <li class="item-content item-link">
-            <div class="item-media"><i class="icon icon-clock"></i></div>
-            <div class="item-inner" id="open-retrievepassword" >
-              <div class="item-title">找回密码</div>
-            </div>
-          </li>
-        </ul>
+
       </div>
       <div class="content-block-title">往期图文直播</div>
 	  <div class="content-block" id="PersonalPage_Live_List" >
@@ -222,8 +208,20 @@ crossorigin="anonymous"></script>
           </div>
         </li>
       </ul>
+      <ul>
+        <li class="item-content item-link">
+          <div class="item-media"><i class="icon icon-friends"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">找回密码</div>
+            <div class="item-input">
+              <input type="email" id="mail-re" placeholder="请输入你的注册邮箱">
+            </div>
+          </div>
+        </li>
+      </ul>
     </div>
-    <p><a href="#" onclick="SubmitExpiration()" class="close-popup">返回</a></p>
+    <p><a href="#" onclick="retrievePassword()">找回密码</a></p>
+    <p><a href="#" onclick="SubmitExpiration()" class="close-popup">保存并返回</a></p>
   </div>
 </div>
 <div class="popup popup-about">

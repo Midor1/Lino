@@ -20,7 +20,7 @@ function createLive() {
     }, function (data, status) {
         if (status === 'success') {
             localStorage.lid = data.lid;
-            window.location.href="index.html";//Will be replaced with concrete url.
+            window.location.href="lives/live.html?lid=" + data.lid;
             $.hidePreloader();
         }
     })
