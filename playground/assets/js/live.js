@@ -12,6 +12,13 @@ Vue.component('message_item', {
 			return this.message.content_type == "text";
 		}
 	},
+	methods:
+	{
+                        prepareReplylist:function(mid)
+                        {
+                        	   replylist_provider.fillReplyList(mid);
+                        }
+	},
 	template: '\
      <div class="card facebook-card host-card">\
           <div class="card-header no-border">\
@@ -24,7 +31,7 @@ Vue.component('message_item', {
               <div class = "card-content-inner" v-else><img :src="message.content"></img></div>\
           </div>\
           <div class="card-footer no-border visible_controll">\
-            <a href="#" class="open-popup open-reply " data-popup="#reply">评论<bdo>&nbsp;{{message.likeamount}}</bdo></a>\
+            <a href="#" class="open-popup open-reply " data-popup="#reply" v-on:click="prepareReplylist(message.mid)">评论<bdo>&nbsp;{{message.likeamount}}</bdo></a>\
           </div>\
         </div>\
 \
@@ -86,7 +93,7 @@ function addItem_general(items, list) {
 	} else {
 		$.each(items, function(index, item) {
 			//TODO:Time sequence problems of network
-			additem_single(items, list)
+			additem_single(item, list)
 		})
 	}
 }
@@ -116,7 +123,7 @@ var message_list_provider = new Vue({
 				"time": new Date().toLocaleString(),
 				"content": "Hello World!",
 				"avatarimg": "http://i4.buimg.com/595334/f50f5535224d3845.jpg",
-				"reply_to": "",
+				"reply_to": "0",
 				"content_type": "text",
 				"istext": "true"
 			}, this.message_list);
@@ -124,7 +131,18 @@ var message_list_provider = new Vue({
 				"mid": "2",
 				"hostname": "hcj",
 				"time": new Date().toLocaleString(),
-				"content": "Hello World!",
+				"content": "Hello World2!",
+				"avatarimg": "http://i4.buimg.com/595334/f50f5535224d3845.jpg",
+				"reply_to": "1",
+				"content_type": "text",
+				"istext": "true"
+
+			}, this.message_list);
+			additem_single({
+				"mid": "3",
+				"hostname": "hcj",
+				"time": new Date().toLocaleString(),
+				"content": "Hello World3!",
 				"avatarimg": "http://i4.buimg.com/595334/f50f5535224d3845.jpg",
 				"reply_to": "",
 				"content_type": "text",
@@ -153,34 +171,27 @@ var replylist_provider = new Vue({
 		latest: 0
 	},
 	methods: {
-		getReplyList: function(lid) {
-			this.reply_list = [];
-
-			additem_single({
-				"mid": "1",
-				"avatarimg": "https://imgsa.baidu.com/forum/w%3D580%3B/sign=b1b9b348f7faaf5184e381b7bc6f95ee/4034970a304e251fea68ff96ad86c9177e3e53c4.jpg",
-				"nickname": "hhh",
-				"content": "Hello World!",
-				"content_type": "text",
-
-			}, this.reply_list);
-			additem_single({
-				"mid": "2",
-				"avatarimg": "https://imgsa.baidu.com/forum/w%3D580%3B/sign=b1b9b348f7faaf5184e381b7bc6f95ee/4034970a304e251fea68ff96ad86c9177e3e53c4.jpg",
-				"nickname": "hhh",
-				"content": "https://imgsa.baidu.com/forum/w%3D580%3B/sign=b1b9b348f7faaf5184e381b7bc6f95ee/4034970a304e251fea68ff96ad86c9177e3e53c4.jpg",
-				"content_type": "img",
-
-			}, this.reply_list);
+		initial:function()
+		{
+			reply_list=[];
+			latest=0;
 		},
 		addItem: function(items) {
 
 			addItem_general(items, replylist_provider.$data.reply_list);
 
-		}
+		},
+                         fillReplyList:function(mid)
+                         {
+                                       this.initial();
+                                       reply_tree_construct(mid,message_list_provider.$data.message_list);
+                                      this.addItem(father2child[mid]);
+                                       return replylist_provider.$data.reply_list;
+                         }
 	},
 	created: function() {
-		this.getReplyList(0);
+		this.reply_list=[];
+
 	}
 })
 
@@ -214,12 +225,13 @@ function getMessages() {
 
 function AllMode() {
 	Mode = 0;
-	$(".visible_controll").show();
+	//$(".visible_controll").show();
 }
 
 function HostOnlyMode() {
 	Mode = 1;
-	$(".visible_controll").hide();
+	//$(".visible_controll").hide();
+	replylist_provider.fillReplyList(0);
 }
 
 function postRawFile() {
@@ -285,4 +297,49 @@ function postImg() {
 	var file = $("#dmg")
 	file.after(file.clone().val(""));
 	file.remove();
+}
+function reply_tree_construct(mid,cache)
+{
+          var result = [];
+          child2father = {};
+          if (father2child[mid]!=undefined)
+          	delete father2child[mid]; 
+          father2child[mid]=[];
+          var p,tmp;
+          cache = cache.sort(function(a,b)
+          {
+          	return a.time-b.time;
+          });
+          //tmp_cache=JSON.parse(json: string)
+          if (mid==-1) return cache;
+          else
+          {
+          	 $.each(cache,function(index,item)
+          	 {
+                    
+          	       // alert("item:"+item);
+          	       // alert("mid:"+item.mid);
+          	       // alert("reply_to"+item.reply_to);
+          	       // alert("check"+(item.reply_to==mid));
+          	       if (item==undefined) return true;
+          	       if (item.reply_to==undefined || item.reply_to==null || item.reply_to=="") return true;
+          	       if (item.reply_to==mid)
+          	       {
+          	       	child2father[item.mid]=mid;
+          	       	father2child[mid].push(item);
+          	       }
+          	       else
+          	       {
+                          if (child2father[item.reply_to]==mid)
+                          {
+                          	child2father[item.mid]=mid;
+                          	father2child[mid].push(item);
+                          }
+          	       }
+          	       
+
+          	 })
+          }
+          result = father2child[mid];
+          return result;
 }
