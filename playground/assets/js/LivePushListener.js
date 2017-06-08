@@ -14,17 +14,6 @@ function LiveMessage(naiveMessage){
 	this.time = naiveMessage.time;
 }
 
-function LiveMessageForRendering(naiveMessage){
-	var message = new LiveMessage(naiveMessage);
-	this.mid = message.mid;
-	this.reply_to = message.reply_to;
-	this.content = message.content;
-	this.content_type = message.content_type;
-
-	var uid = message.owner;
-
-}
-
 function LivePushListener(baseurl, lid, onMessage){
 	//baseurl looks like 'www.lino.com/websocket/lives' or '/websocket/lives' depending on the demend. 
 	this.lid = lid;

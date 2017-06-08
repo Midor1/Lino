@@ -14,6 +14,12 @@ var temptargetid = 0;
 //关于上面两个id的测试我已经做过了
 var livepushlistener;
 
+document.ready = function() {
+
+};
+
+window.onload = init();
+
 function init() {
 	$.ajax({
 		type: "GET",
@@ -27,7 +33,6 @@ function init() {
 			localStorage.hostid = hostid;
 		}
 	});
-
 }
 
 Vue.component('message_item', {
@@ -85,7 +90,7 @@ Vue.component('message_item2', {
 		},
 		prepareedit:function(mid)
 		{
-                                      targetid = mid;
+            targetid = mid;
 		}
 	},
 	template: '\
@@ -100,8 +105,6 @@ Vue.component('message_item2', {
               <div class = "card-content-inner" v-else><img :src="message.content"></img></div>\
           </div>\
         </div>\
-\
-\
      '
 });
 Vue.component('reply_item', {
@@ -165,19 +168,7 @@ function addItem_general(items, list) {
 		})
 	}
 }
-var Hostbar = new Vue({
-	el: "#hostbar",
-	computed: {
-		isHost: function() {
-			return localStorage.hostid == localStorage.uid;
-		}
-	},
-	methods: {
-		setReplyMid: function() {
-			targetid = 0;
-		}
-	}
-})
+
 var message_list_provider = new Vue({
 	el: "#messagebox",
 	data: {
@@ -290,21 +281,7 @@ var replylist_provider = new Vue({
 	}
 })
 
-function initConnect() {
 
-	if (!window.WebSocket) {
-		$.alert("浏览器不支持WebSocket技术,请更换浏览器!");
-	} else {
-		// console.log('This browser does not supports WebSocket');
-	}
-	socket.onopen = function(event) {
-
-	};
-	socket.onmessage = function(event) {
-		Listcache = [];
-
-	}
-}
 
 function GetQueryString(name) {
 	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
@@ -355,8 +332,6 @@ function postRawFile(ReplytoMid) {
 			success: function(data, status) {
 				//alert(data);
 				pic = JSON.parse(data);
-				//alert(pic.file.fid);     
-				var others = JSON.parse(localStorage.others)
 				$.ajax({
 					url: serverurl + "/lives/" + getlid() + "/thread",
 					type: 'POST',
@@ -462,7 +437,7 @@ function createMessage(ReplyToMid) {
 			"lid": getlid()
 
 
-		}),
+		})
 	})
 }
 
@@ -470,3 +445,6 @@ function setReplyMid_outer() //targetid设为temptargetid
 {
 	targetid = temptargetid;
 }
+
+if(localStorage.hostid !== localStorage.uid)
+    $("#hostbar").remove();
