@@ -27,7 +27,8 @@ function init() {
 		url: serverurl + "/lives/" + getlid(),
 		success: function(data, status) {
 			tmp = JSON.parse(data);
-			hostid = tmp.owner;
+			hostid = tmp.live.owner;
+			$("#live-title").text(tmp.live.name);
 			localStorage.hostid = hostid;
 		}
 	});

@@ -9,13 +9,14 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
             integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
             crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="assets/css/border_blue_light_focus.css" type="text/css">
+    <link rel="stylesheet" href="../assets/css/border_blue_light_focus.css" type="text/css">
     <link href="https://cdn.bootcss.com/light7/0.4.3/css/light7-swipeout.css" rel="stylesheet">
 
     <link href="https://cdn.bootcss.com/light7/0.4.3/css/light7-swiper.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/light7/0.4.3/css/light7.css" rel="stylesheet">
     <script src="https://cdn.bootcss.com/light7/0.4.3/js/light7-swipeout.js"></script>
     <script src="https://cdn.bootcss.com/light7/0.4.3/js/light7-swiper.js"></script>
+    <script src="../assets/js/LivePushListener.js"></script>
     <script src="https://cdn.bootcss.com/light7/0.4.3/js/light7.js"></script>
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
@@ -27,9 +28,9 @@
 <body>
 <div id="page-live" class="page page-live">
     <header class="bar bar-nav">
-        <a class="icon icon-left pull-left" href="..\index.html"></a>
-        <a class="icon icon-settings pull-right"></a>
-        <h1 class="title">AV233333</h1>
+        <a class="icon icon-left pull-left" href="../index.html"></a>
+        <a class="icon icon-settings pull-right" href="../modify_live.html"></a>
+        <h1 class="title" id="live-title">AV233333</h1>
     </header>
     <!-- 下面这个nav条只有主播能看到，注意v-show条件，对应vue对象和id同名 -->
     <nav class="bar bar-tab" id="hostbar">
@@ -52,7 +53,7 @@
         </div>
         <div class="tabs" id="messagebox">
             <div id="tab-all" class="tab active">
-                <message_item v-for="(item,index) in message_list" :key="index" v-bind:index="index"
+                <message_item v-for="(item,index) in filterMessageList"  :key="index" v-bind:index="index"
                               v-bind:message="item"></message_item>
 
             </div>
@@ -73,10 +74,10 @@
             <ul>
                 <reply_item v-for="(item,index) in reply_list" :key="index" v-bind:index="index"
                             v-bind:reply="item"></reply_item>
-            </ul>
+            </ul>d
         </div>
         <nav class="bar bar-tab ">
-            <a class="tab-item open-popup" data-popup="#post_img" onclick="setReplyMid_outer()" herf="#">
+            <a class="tab-item open-popup" data-popup="#post_img" onclick="setReplyMid_outer()" href="#">
                 <span class="icon icon-picture"></span>
                 <span class=tab-label>发送图片</span>
             </a>
@@ -172,6 +173,7 @@
         </div>
     </div>
 </div>
-<script src="assets/js/live.js"></script>
+<script src="../assets/js/live.js"></script>
+
 </body>
 </html>

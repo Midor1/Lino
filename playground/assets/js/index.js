@@ -66,7 +66,7 @@ var LiveList = new Vue({
         Init: function () {
             $.ajax({
                 type: 'GET',
-                url: serverurl + "/lives?host=0&upcomdoneing=1&from=0",
+                url: serverurl + "/lives?host=0&upcoming=1&from=0",
                 xhrFields: {
                     withCredentials: true
                 },
