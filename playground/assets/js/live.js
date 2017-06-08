@@ -1,10 +1,30 @@
-var serverurl = "q.aureliano.cc:4567";
+var serverurl = "http://q.aureliano.cc:4567";
 var Mode = 0;
 //0-all,1-hostonly
 var Listcache = [];
 var child2father = {};
 var father2child = {};
-var socket = new WebSocket('ws://' + serverurl + "/lives/" + getlid() + "/thread");
+//var socket = new WebSocket('ws://' + serverurl + "/lives/" + getlid() + "/thread");
+var uid = localStorage.uid;
+var hostid = 0;
+
+
+function init() {
+	$.ajax({
+		type: "GET",
+		xhrFields: {
+			withCredentials: true
+		},
+		url: serverurl + "/lives/" + getlid(),
+		success: function(data, status) {
+			tmp = JSON.parse(data);
+			hostid = tmp.owner;
+			localStorage.hostid = hostid;
+		}
+	});
+
+}
+
 Vue.component('message_item', {
 	props: ["message"],
 	computed: {
@@ -12,12 +32,11 @@ Vue.component('message_item', {
 			return this.message.content_type == "text";
 		}
 	},
-	methods:
-	{
-                        prepareReplylist:function(mid)
-                        {
-                        	   replylist_provider.fillReplyList(mid);
-                        }
+	methods: {
+		prepareReplylist: function(mid) {
+			replylist_provider.fillReplyList(mid);
+			localStorage.outmid = mid;
+		}
 	},
 	template: '\
      <div class="card facebook-card host-card">\
@@ -45,14 +64,15 @@ Vue.component('reply_item', {
 			return this.reply.content_type == "text";
 		}
 	},
-	methods:
-	{
+	methods: {
 
-		popupWrite_sth:function(mid) {
-			
+		popupWrite_sth: function(mid) {
+			$.popup("#write_sth");
+
 		},
-		popupPost_sth:function(mid) {
-			
+		popupPost_sth: function(mid) {
+			$.popup("#post_img");
+
 		}
 	},
 	template: '        <li>\
@@ -69,8 +89,8 @@ Vue.component('reply_item', {
              \
               <div class="item-text" v-if="istext">{{reply.content}}</div>\
               <div  v-else><img :src="reply.content"></img></div>\
-              <p><a class="icon icon-edit pull-left" v-on:click="popupWrite_sth(reply.mid)">文字评论</a>\
-              <a class="icon icon-picture" style="margin-left:300px"  v-on:click="popupPost_sth(reply.mid)">图片评论</a></p>\
+              <p><a class="icon icon-edit pull-left " v-on:click="popupWrite_sth(reply.mid)">文字评论</a>\
+              <a class="icon icon-picture " style="margin-left:300px"  v-on:click="popupPost_sth(reply.mid)">图片评论</a></p>\
             </div>\
             \
           </div>\
@@ -97,6 +117,17 @@ function addItem_general(items, list) {
 		})
 	}
 }
+var Hostbar = new Vue(
+{
+     el:"#hostbar",
+     computed:
+     {
+     	isHost:function()
+     	{
+     		return localStorage.hostid==localStorage.uid;
+     	}
+     }	
+})
 var message_list_provider = new Vue({
 	el: "#messagebox",
 	data: {
@@ -107,39 +138,39 @@ var message_list_provider = new Vue({
 		getAllList: function() {
 			this.$data.message_list = [];
 			additem_single({
-				"mid": "0",
+				"mid": "1",
 				"hostname": "hcj",
 				"time": new Date().toLocaleString(),
 				"content": "http://i4.buimg.com/595334/f50f5535224d3845.jpg",
 				"avatarimg": "http://i4.buimg.com/595334/f50f5535224d3845.jpg",
-				"reply_to": "",
+				"reply_to": "0",
 				"content_type": "img",
 				"istext": "false"
 
 			}, this.message_list);
 			additem_single({
-				"mid": "1",
+				"mid": "2",
 				"hostname": "hcj",
 				"time": new Date().toLocaleString(),
 				"content": "Hello World!",
 				"avatarimg": "http://i4.buimg.com/595334/f50f5535224d3845.jpg",
-				"reply_to": "0",
+				"reply_to": "1",
 				"content_type": "text",
 				"istext": "true"
 			}, this.message_list);
 			additem_single({
-				"mid": "2",
+				"mid": "3",
 				"hostname": "hcj",
 				"time": new Date().toLocaleString(),
 				"content": "Hello World2!",
 				"avatarimg": "http://i4.buimg.com/595334/f50f5535224d3845.jpg",
-				"reply_to": "1",
+				"reply_to": "2",
 				"content_type": "text",
 				"istext": "true"
 
 			}, this.message_list);
 			additem_single({
-				"mid": "3",
+				"mid": "4",
 				"hostname": "hcj",
 				"time": new Date().toLocaleString(),
 				"content": "Hello World3!",
@@ -168,29 +199,32 @@ var replylist_provider = new Vue({
 	el: "#reply",
 	data: {
 		reply_list: [],
-		latest: 0
+		latest: 0,
+		nowmid: 0
 	},
 	methods: {
-		initial:function()
-		{
-			reply_list=[];
-			latest=0;
+		initial: function() {
+			//reply_list.splice(0,reply_list.length);
+			replylist_provider.$data.reply_list=[];
+			latest = 0;
 		},
 		addItem: function(items) {
 
 			addItem_general(items, replylist_provider.$data.reply_list);
 
 		},
-                         fillReplyList:function(mid)
-                         {
-                                       this.initial();
-                                       reply_tree_construct(mid,message_list_provider.$data.message_list);
-                                      this.addItem(father2child[mid]);
-                                       return replylist_provider.$data.reply_list;
-                         }
+		fillReplyList: function(mid) {
+			this.initial();
+			//alert(replylist_provider.$data.reply_list.length);
+			reply_tree_construct(mid, message_list_provider.$data.message_list);
+		
+			this.addItem(father2child[mid]);
+			//alert(replylist_provider.$data.reply_list.length);
+			return replylist_provider.$data.reply_list;
+		}
 	},
 	created: function() {
-		this.reply_list=[];
+		//reply_list.splice(0,reply_list.length);
 
 	}
 })
@@ -211,8 +245,19 @@ function initConnect() {
 	}
 }
 
+function GetQueryString(name) {
+	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+	var r = window.location.search.substr(1).match(reg); //获取url中"?"符后的字符串并正则匹配
+	var context = "";
+	if (r != null)
+		context = r[2];
+	reg = null;
+	r = null;
+	return context == null || context == "" || context == "undefined" ? "" : context;
+}
+
 function getlid() {
-	return 0;
+	return GetQueryString("lid");
 }
 
 function closeConnect() {
@@ -225,12 +270,12 @@ function getMessages() {
 
 function AllMode() {
 	Mode = 0;
-	//$(".visible_controll").show();
+	$(".visible_controll").show();
 }
 
 function HostOnlyMode() {
 	Mode = 1;
-	//$(".visible_controll").hide();
+	$(".visible_controll").hide();
 	replylist_provider.fillReplyList(0);
 }
 
@@ -259,18 +304,13 @@ function postRawFile() {
 				var others = JSON.parse(localStorage.others)
 				$.ajax({
 					url: serverurl + "/users/" + localStorage.uid,
-					type: 'PUT',
+					type: 'POST',
 					data: JSON.stringify({
-						"user": {
-							"uid": localStorage.uid,
-							"nickname": localStorage.nickname,
-							"others": {
-								"description": others.description,
-								"sex": others.sex,
-								"avatar": pic.file.fid
-							}
-						},
-						"password": $.sha256(localStorage.email + localStorage.password + "Lino")
+						"message": {
+							"replyto": ReplyToMid,
+							"lid": getlid()
+						}
+
 					}),
 					xhrFields: {
 						withCredentials: true
@@ -298,48 +338,62 @@ function postImg() {
 	file.after(file.clone().val(""));
 	file.remove();
 }
-function reply_tree_construct(mid,cache)
-{
-          var result = [];
-          child2father = {};
-          if (father2child[mid]!=undefined)
-          	delete father2child[mid]; 
-          father2child[mid]=[];
-          var p,tmp;
-          cache = cache.sort(function(a,b)
-          {
-          	return a.time-b.time;
-          });
-          //tmp_cache=JSON.parse(json: string)
-          if (mid==-1) return cache;
-          else
-          {
-          	 $.each(cache,function(index,item)
-          	 {
-                    
-          	       // alert("item:"+item);
-          	       // alert("mid:"+item.mid);
-          	       // alert("reply_to"+item.reply_to);
-          	       // alert("check"+(item.reply_to==mid));
-          	       if (item==undefined) return true;
-          	       if (item.reply_to==undefined || item.reply_to==null || item.reply_to=="") return true;
-          	       if (item.reply_to==mid)
-          	       {
-          	       	child2father[item.mid]=mid;
-          	       	father2child[mid].push(item);
-          	       }
-          	       else
-          	       {
-                          if (child2father[item.reply_to]==mid)
-                          {
-                          	child2father[item.mid]=mid;
-                          	father2child[mid].push(item);
-                          }
-          	       }
-          	       
 
-          	 })
-          }
-          result = father2child[mid];
-          return result;
+function reply_tree_construct(mid, cache) {
+	var result = [];
+	child2father = {};
+	if (father2child[mid] != undefined)
+		delete father2child[mid];
+	father2child[mid] = [];
+	var p, tmp;
+	cache = cache.sort(function(a, b) {
+		return a.time - b.time;
+	});
+	//tmp_cache=JSON.parse(json: string)
+	if (mid == -1) return cache;
+	else {
+		$.each(cache, function(index, item) {
+
+			// alert("item:"+item);
+			// alert("mid:"+item.mid);
+			// alert("reply_to"+item.reply_to);
+			// alert("check"+(item.reply_to==mid));
+			if (item == undefined) return true;
+			if (item.reply_to == undefined || item.reply_to == null || item.reply_to == "" || item.reply_to == "0") return true;
+			if (item.reply_to == mid ) {
+				child2father[item.mid] = mid;
+				father2child[mid].push(item);
+			} else {
+				if (child2father[item.reply_to] == mid) {
+					child2father[item.mid] = mid;
+					father2child[mid].push(item);
+				}
+			}
+
+
+		})
+	}
+	result = father2child[mid];
+	return result;
+}
+
+function createMessage(ReplyToMid) {
+	var message = $("#write_comment_content").val();
+	$.ajax({
+		url: serverurl + "/lives/" + getlid() + "/thread",
+		xhrFields: {
+			withCredentials: true
+		},
+		type: "POST",
+		data: JSON.stringify({
+			"content": JSON.stringify({
+				"type": "text",
+				"payload": message
+			}),
+			"replyto": ReplyToMid,
+			"lid": getlid()
+
+
+		}),
+	})
 }
