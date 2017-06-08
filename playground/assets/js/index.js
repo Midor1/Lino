@@ -522,9 +522,9 @@ function submitPersonalInfoChange() {
 }
 
 function startSearch() {
-    uid = $("#search").val();
+    name = $("#search").val();
     $.ajax({
-        url: serverurl + "/lives?host=" + uid + "&upcoming=0&from=0",
+        url: serverurl + "/lives?name=" + name + "&upcoming=0&from=0&host=0",
         type: 'GET',
         xhrFields: {
             withCredentials: true
