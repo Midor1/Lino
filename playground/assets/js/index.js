@@ -20,19 +20,25 @@ $(document).ready(function () {
         $.showPreloader("请稍等一下下%>_<%\n点击可以关闭我哦");
 });
 
-
 Vue.component('live_item', {
     props: ['live'], //title,begin_time,description
+    methods:
+        {
+            OnListItemClick: function (item) {
+                //alert("WTF");
+                window.location.href = item.href;
+            }
+        },
     template: '                             \
-    <div class="card demo-card-header-pic">\
-     <div valign="bottom" class="card-header color-white no-border no-padding">\
+    <div class="card demo-card-header-pic" >\
+     <div valign="bottom" class="card-header color-white no-border no-padding" v-on:click="OnListItemClick(live)">\
               <img class="card-cover" :src="live.coverpath" alt="">\
               </div>\
-        <div style="background-image:url()" valign="bottom" class="card-header color-white no-border">\
+        <div style="background-image:url()" valign="bottom" class="card-header color-white no-border" v-on:click="OnListItemClick(live)">\
             {{live.title}}\
         </div>\
-        <div class="card-content">\
-            <div class="card-content-inner">\
+        <div class="card-content" v-on:click="OnListItemClick(live)">\
+            <div class="card-content-inner" >\
                 <p class="color-gray">开始于{{live.begin_time}}</p>\
                 <p>持续时间为{{live.last_time}}</p>\
                 <p>{{live.description}}</p>\
@@ -59,10 +65,6 @@ var LiveList = new Vue({
         latest: 0
     },
     methods: {
-        OnListItemClick: function (item) {
-            //alert("WTF");
-            window.location.href = item.href;
-        },
         Init: function () {
             $.ajax({
                 type: 'GET',
@@ -247,10 +249,6 @@ var PersonalPageLiveList = new Vue({
         latest: 0
     },
     methods: {
-        OnListItemClick: function (item) {
-            //alert("WTF");
-            window.location.href = item.href;
-        },
         Init: function () {
             $.ajax({
                 type: 'GET',
@@ -291,7 +289,7 @@ var SearchLiveList = new Vue({
         latest: 0,
 
     }
-})
+});
 
 // function Update() {
 //  LiveList.$data.Live_Item_List = [

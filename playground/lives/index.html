@@ -113,7 +113,7 @@ crossorigin="anonymous"></script>
       </div>
       <div class="content-block-title">往期图文直播</div>
 	  <div class="content-block" id="PersonalPage_Live_List" > 
-            <live_item v-for="(item,index) in Live_Item_List" :key="index" v-bind:index="index" v-bind:Live="item" @click.native="OnListItemClick(item)"></Live_Item>
+            <live_item v-for="(item,index) in Live_Item_List" :key="index" v-bind:index="index" v-bind:Live="item"></Live_Item>
         </div>
     </div>
   </div>
