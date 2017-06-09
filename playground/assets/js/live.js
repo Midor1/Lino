@@ -4,6 +4,7 @@ var Mode = 0;
 var Listcache = [];
 var child2father = {};
 var father2child = {};
+var tempnickname;
 //var socket = new WebSocket('ws://' + serverurl + "/lives/" + getlid() + "/thread");
 var uid = localStorage.uid;
 var hostid = 0;
@@ -13,8 +14,9 @@ var temptargetid = 0;
 //为了防止该条主线消息mid丢失必须得到这个
 //关于上面两个id的测试我已经做过了
 var livepushlistener;
-
-
+var tempmessages = [];
+var tempmessage;
+var temppoint = 0;
 
 window.onload = init();
 
@@ -27,12 +29,12 @@ function init() {
 		url: serverurl + "/lives/" + getlid(),
 		success: function(data, status) {
 			tmp = JSON.parse(data);
-			hostid = tmp.live.owner;
+			hostid = tmp.live.ownerid;
 			$("#live-title").text(tmp.live.name);
 			localStorage.hostid = hostid;
 		}
 	});
-	$("h1.title").text("AV"+getlid());
+	$("h1.title").text("AV" + getlid());
 }
 
 Vue.component('message_item', {
@@ -50,6 +52,7 @@ Vue.component('message_item', {
 		isHost: function(mid) {
 			return localStorage.hostid === mid;
 		}
+
 	},
 	template: '\
      <div class="card facebook-card host-card">\
@@ -59,6 +62,7 @@ Vue.component('message_item', {
             <div class="facebook-date">{{message.time}}</div>\
           </div>\
           <div class="card-content">\
+              \
             <div class="card-content-inner" v-if="istext">{{message.content}}</div>\
               <div class = "card-content-inner" v-else><img :src="message.content"></img></div>\
           </div>\
@@ -70,11 +74,16 @@ Vue.component('message_item', {
 \
      '
 });
+
+
 Vue.component('message_item2', {
 	props: ["message"],
 	computed: {
 		istext: function() {
 			return this.message.content_type == "text";
+		},
+		isnotreply: function() {
+			return this.message.reply_to != 0;
 		}
 	},
 	methods: {
@@ -103,6 +112,8 @@ Vue.component('message_item2', {
             <div class="facebook-date">{{message.time}}</div>\
           </div>\
           <div class="card-content">\
+                <div class="card-content-inner"  style="color:grey" v-show="isnotreply">{{message.reply_to_hostname}}</div>\
+          <div class="card-content-inner"  style="color:grey" v-show="isnotreply">{{message.reply_to_content}}</div>\
             <div class="card-content-inner" v-if="istext">{{message.content}}</div>\
               <div class = "card-content-inner" v-else><img :src="message.content"></img></div>\
           </div>\
@@ -152,22 +163,46 @@ Vue.component('reply_item', {
 });
 
 function additem_single(item, list) {
-	try {
-		jsonItem = JSON.parse(item);
-	} catch (e) {
-		jsonItem = item;
+	var jsonitem;
+	if (item === undefined) {
+		//console.log("wtf!!!");
+		return;
+	};
+	if (item !== undefined) {
+		try {
+			jsonItem = JSON.parse(item);
+			jsonItem.content = JSON.parse(jsonItem.content);
+		} catch (e) {
+			jsonItem = item;
+			try {
+				jsonItem.content = JSON.parse(item.content);
+			} catch (e) {
+				jsonItem.content = item.content;
+			}
+			//jsonItem.content = JSON.parse(item.content);
+		}
+		//alert("wtf:"+item);
+		//alert("wtf2:"+JSON.stringify(item));
+		//console.log("add_single:" + jsonItem.content + " " + jsonItem.time + " " + JSON.stringify(jsonItem));
+		list.push(jsonItem);
 	}
-	list.push(item);
 }
 
 function addItem_general(items, list) {
-	if (items.length == undefined) {
-		additem_single(items, list)
-	} else {
-		$.each(items, function(index, item) {
-			//TODO:Time sequence problems of network
-			additem_single(item, list)
-		})
+	//alert(items);
+	try {
+		if (items.length === undefined) {
+			additem_single(items, list)
+		} else {
+			//console.log("len:" + items.length);
+			$.each(items, function(index, item) {
+				//TODO:Time sequence problems of network
+				additem_single(item, list)
+			})
+		}
+	} catch (e) {
+		if (items !== undefined)
+			additem_single(items, list);
 	}
 }
 
@@ -182,7 +217,8 @@ var message_list_provider = new Vue({
 		filterMessageList: function() {
 			// `this` points to the vm instance
 			return this.message_list.filter(function(item) {
-				return item.owner===localStorage.hostid;
+				//console.log("wtf:"+item.owner);
+				return item.owner !== localStorage.hostid || item.reply_to !== 0;
 			});;
 		}
 	},
@@ -194,53 +230,82 @@ var message_list_provider = new Vue({
 		},
 		getAllList: function() {
 			this.$data.message_list = [];
-			additem_single({
-				"mid": "1",
-				"hostname": "hcj",
-				"owner":"201",
-				"time": new Date().toLocaleString(),
-				"content": "http://i4.buimg.com/595334/f50f5535224d3845.jpg",
-				"avatarimg": "http://i4.buimg.com/595334/f50f5535224d3845.jpg",
-				"reply_to": "0",
-				"content_type": "img",
-				"istext": "false"
+			// additem_single({
+			// 	"mid": "1",
+			// 	"hostname": "hcj",
+			// 	"owner": "201",
+			// 	"time": new Date().toLocaleString(),
+			// 	"content": "http://i4.buimg.com/595334/f50f5535224d3845.jpg",
+			// 	"avatarimg": "http://i4.buimg.com/595334/f50f5535224d3845.jpg",
+			// 	"reply_to": "0",
+			// 	"content_type": "img",
+			// 	"istext": "false"
 
-			}, this.message_list);
-			additem_single({
-				"mid": "2",
-				"hostname": "hcj",
-				"owner":"201",
-				"time": new Date().toLocaleString(),
-				"content": "Hello World!",
-				"avatarimg": "http://i4.buimg.com/595334/f50f5535224d3845.jpg",
-				"reply_to": "1",
-				"content_type": "text",
-				"istext": "true"
-			}, this.message_list);
-			additem_single({
-				"mid": "3",
-				"hostname": "hcj",
-				"owner":"0",
-				"time": new Date().toLocaleString(),
-				"content": "Hello World2!",
-				"avatarimg": "http://i4.buimg.com/595334/f50f5535224d3845.jpg",
-				"reply_to": "2",
-				"content_type": "text",
-				"istext": "true"
+			// }, this.message_list);
+			// additem_single({
+			// 	"mid": "2",
+			// 	"hostname": "hcj",
+			// 	"owner": "201",
+			// 	"time": new Date().toLocaleString(),
+			// 	"content": "Hello World!",
+			// 	"avatarimg": "http://i4.buimg.com/595334/f50f5535224d3845.jpg",
+			// 	"reply_to": "1",
+			// 	"content_type": "text",
+			// 	"istext": "true"
+			// }, this.message_list);
+			// additem_single({
+			// 	"mid": "3",
+			// 	"hostname": "hcj",
+			// 	"owner": "0",
+			// 	"time": new Date().toLocaleString(),
+			// 	"content": "Hello World2!",
+			// 	"avatarimg": "http://i4.buimg.com/595334/f50f5535224d3845.jpg",
+			// 	"reply_to": "2",
+			// 	"content_type": "text",
+			// 	"istext": "true"
 
-			}, this.message_list);
-			additem_single({
-				"mid": "4",
-				"hostname": "hcj",
-				"time": new Date().toLocaleString(),
-				"content": "Hello World3!",
-				"avatarimg": "http://i4.buimg.com/595334/f50f5535224d3845.jpg",
-				"reply_to": "",
-				"content_type": "text",
-				"istext": "true"
+			// }, this.message_list);
+			// additem_single({
+			// 	"mid": "4",
+			// 	"hostname": "hcj",
+			// 	"time": new Date().toLocaleString(),
+			// 	"content": "Hello World3!",
+			// 	"avatarimg": "http://i4.buimg.com/595334/f50f5535224d3845.jpg",
+			// 	"reply_to": "",
+			// 	"content_type": "text",
+			// 	"istext": "true"
 
-			}, this.message_list);
-
+			// }, this.message_list);
+			//addItem_general(getLiveMessages(getlid()), this.message_list);
+			$.ajax({
+				type: "GET",
+				xhrFields: {
+					withCredentials: true
+				},
+				data: {
+					"begin_time": 0,
+					"end_time": "maxnumber",
+					"begin_count": 0,
+					"end_count": "maxnumber",
+					"reversed_count_order": 1
+				},
+				url: serverurl + "/lives/" + getlid() + "/thread",
+				success: function(data, status) {
+					jsonData = JSON.parse(data);
+					// TODO: insert your callback here
+					messages = jsonData.messages;
+					//tempmessages = jsonData.messages;
+					$.each(messages, function(index, item) {
+						           
+							temppoint = index;
+							LiveMessage(item);
+							//item=tempmessage;
+						})
+						//addItem_general(tempmessages,message_list_provider.$data.message_list);
+						// alert(jsonData.messages[0].content);
+						// this is an array of messages
+				}
+			});
 
 		},
 		getHostOnlyList: function() {
@@ -351,12 +416,13 @@ function postRawFile(ReplytoMid) {
 					type: 'POST',
 					data: JSON.stringify({
 						"message": {
-							"replyto": ReplyToMid,
+							"replyto": targetid,
 							"lid": getlid(),
 							"content": JSON.stringify({
 								"type": "img",
 								"payload": serverurl + "/files/" + pic.file.fid
-							})
+							}),
+							"owner": localStorage.uid
 						}
 
 					}),
@@ -381,8 +447,8 @@ function postRawFile(ReplytoMid) {
 }
 //只要postRawFile没错就没错
 function postImg() {
-	alert(temptargetid);
-	alert(targetid);
+	//alert(temptargetid);
+	//alert(targetid);
 	postRawFile(targetid);
 	var file = $("#dmg")
 	file.after(file.clone().val(""));
@@ -390,8 +456,8 @@ function postImg() {
 }
 
 function posttext() {
-	alert(temptargetid);
-	alert(targetid);
+	//alert(temptargetid);
+	//alert(targetid);
 	createMessage(targetid);
 }
 //已经测试
@@ -443,16 +509,18 @@ function createMessage(ReplyToMid) {
 		},
 		type: "POST",
 		data: JSON.stringify({
-			"message":{
-			"content": JSON.stringify({
-				"type": "text",
-				"payload": message
-			}),
-			"replyto": ReplyToMid,
-			"lid": getlid()
+			"message": {
+				"content": JSON.stringify({
+					"type": "text",
+					"payload": message
+				}),
+				"replyto": ReplyToMid,
+				"lid": getlid(),
+				"owner": localStorage.uid
 
 
-		}})
+			}
+		})
 	})
 }
 
@@ -460,21 +528,68 @@ function setReplyMid_outer() //targetid设为temptargetid
 {
 	targetid = temptargetid;
 }
+
 function LiveMessage(naiveMessage) {
-	this.mid = naiveMessage.mid;
-	this.owner = naiveMessage.owner;
-	this.reply_to = naiveMessage.replyto;
-	this.content = naiveMessage.conent.payload;
-	this.content_type = naiveMessage.content.type;
-	this.time = naiveMessage.time;
+
+	var content = "";
+	var content_type = "";
+	try {
+		content = JSON.parse(naiveMessage.content).payload;
+	} catch (e) {
+		// statements
+		content = naiveMessage.content;
+	}
+	try {
+		content_type = JSON.parse(naiveMessage.content).type;
+	} catch (e) {
+		content_type = naiveMessage.content_type;
+	}
+	tempmessages[naiveMessage.mid] = {
+		"mid": naiveMessage.mid,
+		"owner": naiveMessage.owner,
+		"reply_to": naiveMessage.replyto,
+		"content": content,
+		"content_type": content_type,
+		"time": new Date(naiveMessage.time).toLocaleString(),
+		"hostname": ""
+	};
+	console.log("rrrr:"+tempmessages[naiveMessage.mid].reply_to);
+	getReplyToInfo(tempmessages[naiveMessage.mid].reply_to, tempmessages[naiveMessage.mid].mid);
+
+	$.ajax({
+		type: "GET",
+		xhrFields: {
+			withCredentials: true
+		},
+		datatype: "json",
+		url: serverurl + "/users/" + tempmessages[naiveMessage.mid].owner,
+		success: function(data, status) {
+			jsonData = JSON.parse(data);
+			// TODO: insert your callback here
+			//alert();
+			//console.log(jsonData.user.nickname);
+			tempmessages[naiveMessage.mid].hostname = jsonData.user.nickname;
+			console.log("wtf:" + naiveMessage.mid);
+			additem_single(tempmessages[naiveMessage.mid], message_list_provider.$data.message_list);
+		}
+	});
+	//alert("hhh"+a.owner);
+	// console.log("hhh : a: " + tempmessage.content);
+	// console.log("hhh : naive " + naiveMessage.content);
+	return tempmessage;
 }
 
 
+function websocketinterface(data) {
+	//alert(data);
+	//console.log("wstest:" + data.owner + " " + data.time);
+	message_list_provider.addItem(data);
+}
 
-function LivePushListener(baseurl, lid, onMessage) {
+function LivePushListener(baseurl, lid) {
 	//baseurl looks like 'www.lino.com/websocket/lives' or '/websocket/lives' depending on the demend. 
 	this.lid = lid;
-	this.onMessage = onMessage;
+	//this.onMessage = websocketinterface;
 	this.baseurl = baseurl;
 	this.url = baseurl + '?lid=' + lid;
 
@@ -492,17 +607,22 @@ function LivePushListener(baseurl, lid, onMessage) {
 		setTimeout(this.wsconnect, this.retry_time);
 	}
 
+	this.mark = Math.random();
+	var x = this.mark;
 	this.ws_onmessage = function ws_onmessage(e) {
-		alert(e.data);
-		this.onMessage(new LiveMessage(JSON.parse(e.data)));
+		//alert(e.data);
+		//console.log(x);
+		LiveMessage(JSON.parse(e.data));
 	}
 
 	this.ws_onopen = function ws_onopen() {
 		this.retry_time = 500;
 	}
 
+	var timeExecuted = 0;
 	this.wsconnect = function wsconnect() {
-		this.websocket =new WebSocket(this.url);
+		timeExecuted = timeExecuted + 1;
+		this.websocket = new WebSocket(this.url);
 		this.websocket.onclose = this.ws_onclose;
 		this.websocket.onerror = this.ws_onerror;
 		this.websocket.onmessage = this.ws_onmessage;
@@ -513,5 +633,87 @@ function LivePushListener(baseurl, lid, onMessage) {
 }
 if (localStorage.hostid !== localStorage.uid)
 	$("#hostbar").remove();
-livepushlistener = new LivePushListener("ws://q.aureliano.cc:4567/websocket/lives",getlid(),message_list_provider.addItem);
+livepushlistener = new LivePushListener("ws://q.aureliano.cc:4567/websocket/lives", getlid());
 
+function getNickname(uid) {
+
+	var nickname = "";
+	$.ajax({
+		type: "GET",
+		xhrFields: {
+			withCredentials: true
+		},
+		datatype: "json",
+		url: serverurl + "/users/" + uid,
+		success: function(data, status) {
+			jsonData = JSON.parse(data);
+			// TODO: insert your callback here
+			//alert();
+			//console.log(jsonData.user.nickname);
+			tempnickname = jsonData.user.nickname;
+			//console.log(tempnickname);
+
+		}
+	});
+	//console.log("temp"+tempnickname);
+	return nickname;
+}
+
+function getLiveMessages(lid) {
+	// var serverurl = "http://q.aureliano.cc:4567"
+	var messages = [];
+	$.ajax({
+		type: "GET",
+		xhrFields: {
+			withCredentials: true
+		},
+		data: {
+			"begin_time": 0,
+			"end_time": "maxnumber",
+			"begin_count": 0,
+			"end_count": "maxnumber",
+			"reversed_count_order": 1
+		},
+		url: serverurl + "/users/" + owner,
+		success: function(data, status) {
+			jsonData = JSON.parse(data);
+			// TODO: insert your callback here
+			messages = jsonData.messages;
+			//Console.log(jsonData.messages);
+			tempmessages = jsonData.messages;
+			// alert(jsonData.messages[0].content);
+			// this is an array of messages
+		}
+	});
+	return messages;
+}
+
+function getReplyToInfo(Replytomid, mid) {
+
+	if (Replytomid == 0) return "";
+	console.log("rtm:"+Replytomid+" "+mid);
+             console.log(tempmessages);
+             if (Replytomid==undefined) return "";
+	type = tempmessages[Replytomid].content_type;
+	if (type == "img")
+		tempmessages[mid].reply_to_content = "[图片]";
+	else
+		tempmessages[mid].reply_to_content = tempmessages[Replytomid].content;
+	owner = tempmessages[Replytomid].owner;
+	if (tempmessages[Replytomid].nickname == undefined) {
+		$.ajax({
+			type: "GET",
+			xhrFields: {
+				withCredentials: true
+			},
+			url: serverurl + "/users/" + owner,
+			success: function(data, status) {
+				jsonData = JSON.parse(data);
+				tempmessages[mid].reply_to_hostname ="Reply to : "+ jsonData.user.nickname + "                    " + tempmessages[Replytomid].time;
+			}
+		});
+
+	} else {
+		tempmessages[mid].reply_to_hostname = jsonData.nickname + "                    " + tempmessages[Replytomid].time;
+	}
+}
