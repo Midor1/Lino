@@ -6,9 +6,7 @@
     <script src="https://code.jquery.com/jquery-3.2.1.js"
             integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
             crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
-            integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
-            crossorigin="anonymous"></script>
+ 
     <link rel="stylesheet" href="../assets/css/border_blue_light_focus.css" type="text/css">
     <link href="https://cdn.bootcss.com/light7/0.4.3/css/light7-swipeout.css" rel="stylesheet">
 
@@ -48,19 +46,17 @@
     </nav>
     <div class=content>
         <div class="buttons-tab">
-            <a href="#tab-all" class="tab-link button active">所有消息</a>
-            <a href="#tab-host" class="tab-link button">只看Po主</a>
+            <a href="#tab-host" class="tab-link button active">只看Po主</a>
+            <a href="#tab-all" class="tab-link button">所有消息</a>
         </div>
         <div class="tabs" id="messagebox">
-            <div id="tab-all" class="tab active">
+            <div id="tab-host" class="tab active">
                 <message_item v-for="(item,index) in filterMessageList"  :key="index" v-bind:index="index"
                               v-bind:message="item"></message_item>
 
             </div>
-            <div id="tab-host" class="tab">
-                <!-- TODO: 主播的uid在localStorage.hostid，加载时间是在BODY onload的时候 -->
-                <!--     这里的message_item的v-for麻烦加个filter...实在不想写了...太累了... -->
-                <!--    注意这里是message_item2...考虑两种模式：QQ群模式和只看楼主模式的显示方式可能略有不同 -->
+            <div id="tab-all" class="tab">
+              
                 <message_item2 v-for="(item,index) in message_list" :key="index" v-bind:index="index"
                                v-bind:message="item"></message_item2>
 
@@ -106,6 +102,7 @@
         </ul>
     </div>
 </div>
+</div>
 <div class="popup" id="write_sth">
     <div class="content">
         <div class="list-block">
@@ -135,7 +132,7 @@
             <div class="row">
                 <div class="col-50"><a href="#"
                                        class=" button button-big button-fill button-danger close-popup">Cancel</a></div>
-                <div class="col-50"><a href="#" class="button button-big button-fill button-success"
+                <div class="col-50"><a href="#" class="button button-big button-fill button-success close-popup"
                                        onclick="posttext()">Submit</a></div>
             </div>
         </div>
@@ -170,7 +167,7 @@
             <div class="row">
                 <div class="col-50"><a href="#"
                                        class=" button button-big button-fill button-danger close-popup">Cancel</a></div>
-                <div class="col-50"><a href="#" class="button button-big button-fill button-success"
+                <div class="col-50"><a href="#" class="button button-big button-fill button-success close-popup"
                                        onclick="postImg()">Submit</a></div>
             </div>
         </div>

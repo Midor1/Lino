@@ -22,13 +22,39 @@ $(document).ready(function () {
 
 Vue.component('live_item', {
     props: ['live'], //title,begin_time,description
-    methods:
-        {
-            OnListItemClick: function (item) {
-                //alert("WTF");
-                window.location.href = item.href;
-            }
+    methods: {
+        OnListItemClick: function (item) {
+            //alert("WTF");
+            window.location.href = item.href;
         },
+        OnLikeClick: function (item) {
+            if($("#like" + item.lid).text() == "赞") {
+                $.ajax({
+                    url: serverurl + "/lives/" + item.lid +"/like",
+                    type: 'PUT',
+                    xhrFields: {
+                        withCredentials: true
+                    }
+                });
+                $.alert('点赞成功');
+                item.likeamount++;
+                $("#like" + item.lid).text("取消赞");
+            }
+            else {
+                $.ajax({
+                    url: serverurl + "/lives/" + item.lid +"/like",
+                    type: 'DELETE',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                });
+                $.alert('取消赞成功');
+                item.likeamount--;
+                $("#like" + item.lid).text("赞");
+            }
+
+        }
+    },
     template: '                             \
     <div class="card demo-card-header-pic" >\
      <div valign="bottom" class="card-header color-white no-border no-padding" v-on:click="OnListItemClick(live)">\
@@ -47,7 +73,7 @@ Vue.component('live_item', {
         <div class="card-footer">\
         <div>\
             <div style="display:inline-block"> \
-            <a href="#" class="link" onclick="Like()">赞</a>\
+            <a href="#" class="likes" v-on:click="OnLikeClick(live)" :id="\'like\' + live.lid">赞</a>\
             </div>\
             <div style="display:inline-block"> \
             <p>{{live.likeamount}}</p>\
@@ -55,6 +81,24 @@ Vue.component('live_item', {
             </div>\
             <a href="#" class="link" onclick="More()">更多</a>\
         </div>\
+    </div>'
+});
+
+Vue.component('user_item', {
+    props: ['user'], //nickname
+    methods: {
+        OnListItemClick: function (item) {
+            //alert("WTF");
+            window.location.href = item.href;
+        }
+    },
+    template: '\
+    <div class="card" v-on:click="OnListItemClick(user)">\
+    <div class="card-content">\
+    <div class="card-content-inner">\
+    <p>用户:{{user.nickname}}</p>\
+    </div>\
+    </div>\
     </div>'
 });
 
@@ -72,17 +116,17 @@ var LiveList = new Vue({
                 xhrFields: {
                     withCredentials: true
                 },
-                datatype: "json",
                 success: function (data, status) {
                     result = JSON.parse(data);
                     $.each(result.lives, function (index, item) {
                         LiveList.$data.Live_Item_List.push({
+                            lid: item.lid,
                             title: item.name,
                             begin_time: new Date(item.begin_time).toLocaleString(),
                             description: item.description,
                             last_time: formatSeconds(item.time_lasted),
                             //coverpath: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1496073561214&di=b31cb40ac5e96a0169d6a21a86e1cd83&imgtype=0&src=http%3A%2F%2Fngnews.7xz.com%2Fuploadfile%2F2016%2F0629%2F20160629092602704.jpg",
-                            coverpath:getCover(item.cover),
+                            coverpath: getCover(item.cover),
                             likeamount: getlike(serverurl + "/lives/" + item.lid + "/like"),
                             href: "./lives/live.html?lid=" + item.lid
                         });
@@ -97,23 +141,21 @@ var LiveList = new Vue({
         if (typeof(localStorage.uid) !== "undefined") {
             $.ajax(
                 {
-                    type:'POST',
-                    xhrFields:
-                        {
-                            withCredentials: true
-                        },
-                    url: serverurl+"/users/auth",
-                    data:JSON.stringify({"authinfo":
-                        {
-                            "mail":localStorage.email,
-                            "hashedPassword":$.sha256(localStorage.email+localStorage.password+"Lino")
+                    type: 'POST',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    url: serverurl + "/users/auth",
+                    data: JSON.stringify({
+                        "authinfo": {
+                            "mail": localStorage.email,
+                            "hashedPassword": $.sha256(localStorage.email + localStorage.password + "Lino")
                         }
                     }),
-                    success:function (data, status)
-                    {
+                    success: function (data, status) {
                         $("#panel-left").remove();
                     },
-                    error:function (data,status) {
+                    error: function (data, status) {
                         $.toast("出于安全考虑，请重新登录");
                         Logout();
                     }
@@ -136,30 +178,29 @@ function postRawFile() {
     //              Attention that this function overwrites type, contentType, data and processData in settings
     var reader = new FileReader();
     var files = $('input[name="file"]').prop('files');
-    reader.onload = function(){
+    reader.onload = function () {
         $.ajax({
-            type:'POST',
-            xhrFields:
-                {
-                    withCredentials: true
-                },
-            contentType:'application/octet-stream',
-            processData:false,
-            url: serverurl+"/files",
-            data:new Uint8Array(this.result),
-            success: function (data,status) {
+            type: 'POST',
+            xhrFields: {
+                withCredentials: true
+            },
+            contentType: 'application/octet-stream',
+            processData: false,
+            url: serverurl + "/files",
+            data: new Uint8Array(this.result),
+            success: function (data, status) {
                 pic = JSON.parse(data);
-                var others=JSON.parse(localStorage.others);
+                var others = JSON.parse(localStorage.others);
                 $.ajax({
                     url: serverurl + "/users/" + localStorage.uid,
                     type: 'PUT',
                     data: JSON.stringify({
                         "user": {
                             "uid": localStorage.uid,
-                            "nickname" :localStorage.nickname,
+                            "nickname": localStorage.nickname,
                             "others": {
-                                "description" : others.description,
-                                "sex" : others.sex,
+                                "description": others.description,
+                                "sex": others.sex,
                                 "avatar": pic.file.fid
                             }
                         },
@@ -169,64 +210,22 @@ function postRawFile() {
                         withCredentials: true
                     },
                     success: function (data, status) {
-                        $("#avatar-panel").attr('src',serverurl + "/files/" + pic.file.fid);
-                        $("#avatar-page").attr('src',serverurl + "/files/" + pic.file.fid);
+                        $("#avatar-panel").attr('src', serverurl + "/files/" + pic.file.fid);
+                        $("#avatar-page").attr('src', serverurl + "/files/" + pic.file.fid);
                         $.alert('设置完成');
                     },
-                    error: function(data, status) {
-                        $.toast('发生了' + data.status +'错误');
+                    error: function (data, status) {
+                        $.toast('发生了' + data.status + '错误');
                     }
                 });
             },
-            error: function (data,status) {
-                $.toast('发生了' + data.status +'错误');
+            error: function (data, status) {
+                $.toast('发生了' + data.status + '错误');
             }
         });
     };
     reader.readAsArrayBuffer(files[0]);
 }
-
-/*
-function Upload() {
-    var fd = new FormData($("#upload-avatar")[0]);
-    $.ajax({
-        url: serverurl + "/files",
-        type: "POST",
-        data: fd,
-        xhrFields: {
-            withCredentials: true
-        },
-        processData: false,  // 不处理数据
-        contentType: false,  // 不设置内容类型
-        success: function (data,status) {
-            alert(data);
-            pic = JSON.stringify(data);
-            alert(pic.file.fid);
-            $.ajax({
-                url: serverurl + "/users/" + localStorage.uid,
-                type: 'PUT',
-                data: JSON.stringify({
-                    "user": {
-                        "others": {
-                            "avatar": pic.file.fid
-                        }
-                    }
-                }),
-                xhrFields: {
-                    withCredentials: true
-                },
-                success: function (data, status) {
-                    $.alert("修改成功");
-                }
-            });
-        },
-        error: function (data,status) {
-            alert(data);
-            alert(status);
-        }
-    });
-}
-*/
 
 function getlike(likeurl) {
     var result = 0;
@@ -267,7 +266,7 @@ var PersonalPageLiveList = new Vue({
                             description: item.description,
                             last_time: formatSeconds(item.time_lasted),
                             //coverpath: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1496073561214&di=b31cb40ac5e96a0169d6a21a86e1cd83&imgtype=0&src=http%3A%2F%2Fngnews.7xz.com%2Fuploadfile%2F2016%2F0629%2F20160629092602704.jpg",
-                            coverpath:getCover(item.cover),
+                            coverpath: getCover(item.cover),
                             likeamount: getlike(serverurl + "/lives/" + item.lid + "/like"),
                             href: "./lives/live.html?lid=" + item.lid
                         });
@@ -287,27 +286,18 @@ var SearchLiveList = new Vue({
     el: '#Search_Live_List',
     data: {
         Live_Item_List: [],
-        latest: 0,
+        latest: 0
 
     }
 });
 
-// function Update() {
-//  LiveList.$data.Live_Item_List = [
-//      {
-//          title:"Lalala",
-//          starttime:"2017/05/11 12:00:00",
-//          content:"hh",
-//          href:"http://www.baidu.com"
-//      },
-//      {
-//          title:"MyGree",
-//          starttime:"2017/05/11 12:00:00",
-//          content:"hh",
-//          href:"http://www.bilibili.com"
-//      }
-//  ];
-// }
+var UserList = new Vue({
+    el: '#user_list',
+    data: {
+        User_List: []
+    }
+});
+
 function Like() {
     //title_2.title='Thank you!';
     alert('Thank you!');
@@ -330,8 +320,8 @@ function Logout() {
             success: function (data, status) {
                 window.location.href = "index.html";
             },
-            error: function(data,status) {
-                $.toast('发生了' + data.status +'错误');
+            error: function (data, status) {
+                $.toast('发生了' + data.status + '错误');
             }
         }
     );
@@ -399,8 +389,8 @@ var PersonalPage = new Vue({
                 // alert(JSON.stringify(list.user.others));
                 // alert(JSON.parse(list.user.others).sex);
                 others = list.user.others;
-                $("#avatar-panel").attr('src',serverurl + "/files/" + others.avatar);
-                $("#avatar-page").attr('src',serverurl + "/files/" + others.avatar);
+                $("#avatar-panel").attr('src', serverurl + "/files/" + others.avatar);
+                $("#avatar-page").attr('src', serverurl + "/files/" + others.avatar);
                 PersonalPage.$data.personalDescription = others.description;
                 PersonalPage.$data.sex = others.sex;
             }
@@ -467,14 +457,14 @@ var PersonalConfig = new Vue({
         // PersonalConfig.$data.nickname="123";
     }
 
-})
+});
 
 function SubmitExpiration() {
     var expiration = $("#expiration").val();
     var now = new Date();
     now.setTime(now.getTime() + expiration * 24 * 3600 * 1000);
     document.cookie = "expires=" + now.toUTCString();
-    setTimeout("localStorage.clear();",now.getTime());
+    setTimeout("localStorage.clear();", now.getTime());
 }
 
 function submitPersonalInfoChange() {
@@ -502,7 +492,8 @@ function submitPersonalInfoChange() {
                     "nickname": newnickname,
                     "others": {
                         "description": description,
-                        "sex": sex
+                        "sex": sex,
+                        "avatar" : localStorage.avatar
                     }
                 },
                 "password": $.sha256(localStorage.email + password + "Lino")
@@ -522,6 +513,8 @@ function submitPersonalInfoChange() {
 
 function startSearch() {
     name = $("#search").val();
+    $("#live-list-title").text("直播:");
+    $("#user-list-title").text("用户:");
     $.ajax({
         url: serverurl + "/lives?name=" + name + "&upcoming=0&from=0&host=0",
         type: 'GET',
@@ -532,6 +525,7 @@ function startSearch() {
             a = JSON.parse(data);
             list = a.lives;
             result = JSON.parse(data);
+            SearchLiveList.$data.Live_Item_List = [];
             $.each(result.lives, function (index, item) {
 
                 SearchLiveList.$data.Live_Item_List.push({
@@ -540,7 +534,7 @@ function startSearch() {
                     description: item.description,
                     last_time: formatSeconds(item.time_lasted),
                     //coverpath: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1496073561214&di=b31cb40ac5e96a0169d6a21a86e1cd83&imgtype=0&src=http%3A%2F%2Fngnews.7xz.com%2Fuploadfile%2F2016%2F0629%2F20160629092602704.jpg",
-                    coverpath:getCover(item.cover),
+                    coverpath: getCover(item.cover),
                     likeamount: serverurl + "/lives/" + item.lid + "/like",
                     href: "./lives/live.html?lid=" + item.lid
                 });
@@ -549,10 +543,30 @@ function startSearch() {
 
         }
     });
+    $.ajax({
+        url: serverurl + "/users?nickname=" + name + "&from=0",
+        type: 'GET',
+        xhrFields: {
+            withCredentials: true
+        },
+        success: function (data, status) {
+            a = JSON.parse(data);
+            list = a.users;
+            result = JSON.parse(data);
+            UserList.$data.User_List = [];
+            $.each(result.users, function (index, item) {
+                UserList.$data.User_List.push({
+                    nickname:item.nickname,
+                    href: "./space.html?uid=" + item.uid
+                });
+            });
+        }
+    });
+
 }
 
 function checkit(isChecked) {
-    if(isChecked)
+    if (isChecked)
         $(document.body)['addClass']('theme-dark');
     else
         $(document.body)['removeClass']('theme-dark');
@@ -560,12 +574,13 @@ function checkit(isChecked) {
 
 function retrievePassword() {
     var mail = $("#mail-re").val();
+    localStorage.email = mail;
     $.showPreloader('正在执行查询...');
     $.ajax({
         url: serverurl + "/users/forgot",
         type: 'POST',
         data: JSON.stringify({
-            "mail": mail
+                "mail": mail
             }
         ),
         xhrFields: {
@@ -575,7 +590,7 @@ function retrievePassword() {
             $.hidePreloader();
             $.alert("已发送邮件");
         },
-        error: function (data,status) {
+        error: function (data, status) {
             $.hidePreloader();
             $.alert("请检查您的输入" + data.status);
         }

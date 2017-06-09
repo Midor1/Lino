@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>个人空间-水木书荟</title>
+<script src="https://code.jquery.com/jquery-3.2.1.js"
+        integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+        crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/vue/2.3.3/vue.js"></script>
+<script>$.config={autoInit:true}</script>
+<link href="https://cdn.bootcss.com/light7/0.4.3/css/light7.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/light7/0.4.3/js/light7.js"></script>
+
+<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+<link rel="shortcut icon" href="//static.hdslb.com/images/favicon.ico">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="Access-Control-Allow-Origin" content="*">
+<script src="assets/js/jquery.sha256.js"></script>
+<script src="assets/js/jquery.cookie.js"></script>
+</head>
+<body>
+<div id="page-me" class="page page-me">
+  <header class="bar bar-nav">
+    <a class="button button-link button-nav pull-left open-panel" data-panel="#panel-left" data-transition="slide-out">
+      <span class="icon icon-menu"></span>
+    </a>
+    <h1 class="title">个人空间</h1>
+  </header>
+  <div class="content" >
+    <div class="page-settings">
+      <div id="PersonalSpace">
+        <div class="list-block media-list person-card" >
+          <ul>
+            <li>
+              <div class="item-content">
+                <div class="item-media"><img id="avatar-space" src="http://main-pics.oss-cn-hangzhou.aliyuncs.com/hcj.jpg" width="80"></div>
+                <div class="item-inner">
+                  <div class="item-title-row">
+                    <div class="item-title" id="space-nickname"></div>
+                  </div>
+                  <div class="item-subtitle" id="space-description"></div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="content-block" id="comment_list">
+          <div class="content-block-title" id="comment-list-title"></div>
+          <comment_item v-for="(item,index) in Comment_List" :key="index" v-bind:index="index" v-bind:Comment="item" ></comment_item>
+        </div>
+      </div>
+      <div class="list-block">
+        <ul>
+          <li class="align-top">
+            <div class="item-content">
+              <div class="item-media"><i class="icon icon-form-comment"></i></div>
+              <div class="item-inner">
+                <div class="item-title label">留言板</div>
+                <div class="item-input">
+                  <textarea placeholder="发表你的评论..." id="comment-content"></textarea>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="content-block">
+        <div class="row" onclick="postComment()">
+          <div class="col-100">
+            <a href="#" class="button button-big button-fill button-success">Submit</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="panel panel-left panel-reveal theme-dark" id="panel-left">
+  <div class="content-block">
+    <div class="content-block">
+      <div class="list-block">
+        <ul>
+          <li>
+            <div class="item-content">
+              <div class="item-inner"><div class="item-title label" style="width: 60%;">倒序查看评论</div>
+                <div class="item-input">
+                  <label class="label-switch"><input type="checkbox" id="order-switch" onclick="checkOrder(this.checked)">
+                    <div class="checkbox"></div>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    <p><a href="#" class="close-panel">关闭</a></p>
+  </div>
+</div>
+<script>
+    var serverurl = "http://q.aureliano.cc:4567";
+    var reg = new RegExp("(^|&)uid=([^&]*)(&|$)");
+    var r = window.location.search.substr(1).match(reg);
+    var uid = r[2];
+
+    var orderElement = 0;
+
+    Vue.component('comment_item', {
+        props: ['comment'],
+        template: '\
+    <div class="card">\
+    <div class="card-content">\
+    <div class="card-content-inner">\
+    <p>匿名用户:{{comment.content}}</p>\
+    </div>\
+    </div>\
+    </div>'
+    });
+
+    var CommentList = new Vue({
+        el: '#comment_list',
+        data: {
+            Comment_List: []
+        }
+    });
+
+    function postComment() {
+        $.ajax({
+            type: 'POST',
+            url: serverurl + "/personalcomments/" + uid,
+            data: JSON.stringify({
+                message:{
+                    "content": $("#comment-content").val()
+                }
+            }),
+            xhrFields: {
+                withCredentials: true
+            },
+            success: function (data, status) {
+                $.alert('已发送评论');
+                window.location.reload();
+            },
+            error: function (data, status) {
+
+            }
+        });
+    }
+
+    function checkOrder(isChecked) {
+        CommentList.$data.Comment_List.reverse();
+    }
+
+    $.ajax({
+        type: "GET",
+        xhrFields: {
+            withCredentials: true
+        },
+        url: serverurl + "/users/" + uid,
+        success: function (data, status) {
+            //alert(data.user.uid);
+            list = JSON.parse(data);
+            localStorage.spaceuid = list.user.uid;
+            localStorage.spacenickname = list.user.nickname;
+            localStorage.spaceothers = JSON.stringify(list.user.others);
+            $("#space-nickname").text(localStorage.spacenickname);
+            $("#space-description").text(JSON.parse(localStorage.spaceothers).description);
+            $("#avatar-space").attr('src', serverurl + "/files/" + JSON.parse(localStorage.spaceothers).avatar);
+        }
+    });
+
+    $.ajax({
+        type: "GET",
+        xhrFields: {
+            withCredentials: true
+        },
+        url: serverurl + "/personalcomments/" + uid + "?begin_time=0&end_time=maxnumber&begin_count=0&end_count=maxnumber&reversed_count_order=" + orderElement,
+        success: function (data, status) {
+            a = JSON.parse(data);
+            list = a.users;
+            result = JSON.parse(data);
+            CommentList.$data.Comment_List = [];
+            $.each(result.messages, function (index, item) {
+                CommentList.$data.Comment_List.push({
+                    mid: item.mid,
+                    content: item.content,
+                });
+            });
+        }
+    });
+
+</script>
+</body>
+</html>
