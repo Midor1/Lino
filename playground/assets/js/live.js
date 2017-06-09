@@ -32,6 +32,7 @@ function init() {
 			localStorage.hostid = hostid;
 		}
 	});
+	$("h1.title").text("AV"+getlid());
 }
 
 Vue.component('message_item', {
@@ -442,6 +443,7 @@ function createMessage(ReplyToMid) {
 		},
 		type: "POST",
 		data: JSON.stringify({
+			"message":{
 			"content": JSON.stringify({
 				"type": "text",
 				"payload": message
@@ -450,7 +452,7 @@ function createMessage(ReplyToMid) {
 			"lid": getlid()
 
 
-		})
+		}})
 	})
 }
 
@@ -491,6 +493,7 @@ function LivePushListener(baseurl, lid, onMessage) {
 	}
 
 	this.ws_onmessage = function ws_onmessage(e) {
+		alert(e.data);
 		this.onMessage(new LiveMessage(JSON.parse(e.data)));
 	}
 

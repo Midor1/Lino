@@ -74,10 +74,10 @@
             <ul>
                 <reply_item v-for="(item,index) in reply_list" :key="index" v-bind:index="index"
                             v-bind:reply="item"></reply_item>
-            </ul>d
+            </ul>
         </div>
         <nav class="bar bar-tab ">
-            <a class="tab-item open-popup" data-popup="#post_img" onclick="setReplyMid_outer()" href="#">
+            <a class="tab-item open-popup" data-popup="#post_img" onclick="setReplyMid_outer()" herf="#">
                 <span class="icon icon-picture"></span>
                 <span class=tab-label>发送图片</span>
             </a>
@@ -98,9 +98,12 @@
 <div class="popover my-popover">
     <div class="popover-angle"></div>
     <div class="popover-inner">
-        <p><a class="icon icon-edit  open-popup" data-popup="#write_sth">文字评论</a></p>
-        <p><a class="icon icon-picture open-popup" data-popup="#post_img">图片评论</a></p>
-        <p><a class="icon icon-check close-popover">返回</a></p>
+    <div class="list-block">
+    <ul>
+        <li><a class="icon icon-edit  open-popup" data-popup="#write_sth">文字评论</a></li>
+        <li><a class="icon icon-picture open-popup" data-popup="#post_img">图片评论</a></li>
+        <li><a class="icon icon-check close-popover">返回</a></li>
+        </ul>
     </div>
 </div>
 <div class="popup" id="write_sth">

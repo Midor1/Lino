@@ -6,6 +6,7 @@ var serverurl = "http://q.aureliano.cc:4567";
 
 function createLive() {
     $.showPreloader("正在创建..");
+
     var name=$("#name").val();
     var type=$("#type").val();
     var time=$("#datetime-picker").val().replace(new RegExp("-","gm"),"/");

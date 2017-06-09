@@ -7,7 +7,7 @@
 /*jshint multistr: true */
 //TODO: change serverurl and hide it during deployment
 var serverurl = "http://q.aureliano.cc:4567";
-
+var testlive = "./lives/live.html?lid=";
 $(document).ready(function () {
     // if($.cookie("Login_Success")==null)
     //TODO:记得改回来...现在是为了方便调试.....   
@@ -249,6 +249,7 @@ var PersonalPageLiveList = new Vue({
         latest: 0
     },
     methods: {
+
         Init: function () {
             $.ajax({
                 type: 'GET',
