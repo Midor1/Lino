@@ -1,5 +1,4 @@
-﻿﻿ <!doctype html>
-<html class="pixel-ratio-1">
+﻿<html class="pixel-ratio-1">
 <head>
 <meta charset="utf-8">
 <title>登录 - 水木书荟</title>
@@ -102,7 +101,10 @@
                                     }
                                 );
 
-                            }
+                            },
+                            error:function() {
+							    $.alert('验证失败');
+							}
                         }
                     );
                 }

@@ -21,6 +21,7 @@ var temppoint = 0;
 window.onload = init();
 
 function init() {
+
 	$.ajax({
 		type: "GET",
 		xhrFields: {
@@ -112,8 +113,8 @@ Vue.component('message_item2', {
             <div class="facebook-date">{{message.time}}</div>\
           </div>\
           <div class="card-content">\
-                <div class="card-content-inner"  style="color:grey" v-show="isnotreply">{{message.reply_to_hostname}}</div>\
-          <div class="card-content-inner"  style="color:grey" v-show="isnotreply">{{message.reply_to_content}}</div>\
+                <div class="card-content-inner"  style="color:grey" v-show="isnotreply">{{message.reply_to_hostname}}<br/>{{message.reply_to_time}}<br/>{{message.reply_to_content}}</div>\
+          \
             <div class="card-content-inner" v-if="istext">{{message.content}}</div>\
               <div class = "card-content-inner" v-else><img :src="message.content"></img></div>\
           </div>\
@@ -146,7 +147,7 @@ Vue.component('reply_item', {
             <img :src="reply.avatarimg" width="44">\
             </div>\
              <p >\
-                {{reply.nickname}}\
+                {{reply.hostname}}\
               </p>\
               </div>\
             <div class="item-inner" style="margin-left:30px">\
@@ -221,6 +222,11 @@ var message_list_provider = new Vue({
 				// console.log((item.owner != localStorage.hostid || (item.owner == localStorage.hostid && item.reply_to != 0)));
 				return !(item.owner != localStorage.hostid || (item.owner == localStorage.hostid && item.reply_to != 0));
 			});;
+		},
+		dynamicMessageList: function() {
+			return this.message_list.sort(function(a, b) {
+				return a.utctime - b.utctime;
+			});
 		}
 	},
 	methods: {
@@ -297,7 +303,7 @@ var message_list_provider = new Vue({
 					messages = jsonData.messages;
 					//tempmessages = jsonData.messages;
 					$.each(messages, function(index, item) {
-						           
+
 							temppoint = index;
 							LiveMessage(item);
 							//item=tempmessage;
@@ -470,7 +476,7 @@ function reply_tree_construct(mid, cache) {
 	father2child[mid] = [];
 	var p, tmp;
 	cache = cache.sort(function(a, b) {
-		return a.time - b.time;
+		return a.utctime - b.utctime;
 	});
 	//tmp_cache=JSON.parse(json: string)
 	if (mid == 0) return cache;
@@ -497,6 +503,7 @@ function reply_tree_construct(mid, cache) {
 		})
 	}
 	result = father2child[mid];
+
 	return result; //就是把某个mid的子孙message全部收集起来，
 	//函数返回的是整理好的array，嗯嗯就这样
 }
@@ -552,6 +559,7 @@ function LiveMessage(naiveMessage) {
 		"content": content,
 		"content_type": content_type,
 		"time": new Date(naiveMessage.time).toLocaleString(),
+		"utctime":naiveMessage.time,
 		"hostname": ""
 	};
 	//console.log("rrrr:"+tempmessages[naiveMessage.mid].reply_to);
@@ -563,6 +571,7 @@ function LiveMessage(naiveMessage) {
 			withCredentials: true
 		},
 		datatype: "json",
+		async:false,
 		url: serverurl + "/users/" + tempmessages[naiveMessage.mid].owner,
 		success: function(data, status) {
 			jsonData = JSON.parse(data);
@@ -693,8 +702,8 @@ function getReplyToInfo(Replytomid, mid) {
 
 	if (Replytomid == 0) return "";
 	// console.log("rtm:"+Replytomid+" "+mid);
- //             console.log(tempmessages);
-             if (Replytomid==undefined) return "";
+	//             console.log(tempmessages);
+	if (Replytomid == undefined) return "";
 	type = tempmessages[Replytomid].content_type;
 	if (type == "img")
 		tempmessages[mid].reply_to_content = "[图片]";
@@ -707,14 +716,17 @@ function getReplyToInfo(Replytomid, mid) {
 			xhrFields: {
 				withCredentials: true
 			},
+			async:false,
 			url: serverurl + "/users/" + owner,
 			success: function(data, status) {
 				jsonData = JSON.parse(data);
-				tempmessages[mid].reply_to_hostname ="Reply to : "+ jsonData.user.nickname + "                    " + tempmessages[Replytomid].time;
+				tempmessages[mid].reply_to_hostname = "Reply to : " + jsonData.user.nickname ;
+				tempmessages[mid].reply_to_time= tempmessages[Replytomid].time;
 			}
 		});
 
 	} else {
-		tempmessages[mid].reply_to_hostname = jsonData.nickname + "                    " + tempmessages[Replytomid].time;
+		tempmessages[mid].reply_to_hostname ="Reply to : " +tempmessages[Replytomid].nickname;
+		 tempmessages[mid].reply_to_time= tempmessages[Replytomid].time;
 	}
 }

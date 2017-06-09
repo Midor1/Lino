@@ -16,7 +16,7 @@
     <script src="https://cdn.bootcss.com/light7/0.4.3/js/light7-swiper.js"></script>
     <script src="../assets/js/LivePushListener.js"></script>
     <script src="https://cdn.bootcss.com/light7/0.4.3/js/light7.js"></script>
-    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/vue/2.3.3/vue.js"></script>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <link rel="shortcut icon" href="//static.hdslb.com/images/favicon.ico">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -57,7 +57,7 @@
             </div>
             <div id="tab-all" class="tab">
               
-                <message_item2 v-for="(item,index) in message_list" :key="index" v-bind:index="index"
+                <message_item2 v-for="(item,index) in dynamicMessageList" :key="index" v-bind:index="index"
                                v-bind:message="item"></message_item2>
 
             </div>

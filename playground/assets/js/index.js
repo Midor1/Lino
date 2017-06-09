@@ -118,6 +118,10 @@ var LiveList = new Vue({
                 },
                 success: function (data, status) {
                     result = JSON.parse(data);
+                    var likes=[];
+                    $.each(result.lives, function (index, item) {
+                        likes[index]=getlike(serverurl + "/lives/" + item.lid + "/like")
+                    });
                     $.each(result.lives, function (index, item) {
                         LiveList.$data.Live_Item_List.push({
                             lid: item.lid,
@@ -127,7 +131,8 @@ var LiveList = new Vue({
                             last_time: formatSeconds(item.time_lasted),
                             //coverpath: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1496073561214&di=b31cb40ac5e96a0169d6a21a86e1cd83&imgtype=0&src=http%3A%2F%2Fngnews.7xz.com%2Fuploadfile%2F2016%2F0629%2F20160629092602704.jpg",
                             coverpath: getCover(item.cover),
-                            likeamount: getlike(serverurl + "/lives/" + item.lid + "/like"),
+                            //likeamount: getlike(serverurl + "/lives/" + item.lid + "/like"),
+                            likeamount: likes[index],
                             href: "./lives/live.html?lid=" + item.lid
                         });
                     });
@@ -234,9 +239,10 @@ function getlike(likeurl) {
         xhrFields: {
             withCredentials: true
         },
+        async:false,
         url: likeurl,
         success: function (data, status) {
-            result = data;
+            result = JSON.parse(data).likes;
         }
     });
     return result;
