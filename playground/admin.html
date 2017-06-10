@@ -1,0 +1,119 @@
+<html class="pixel-ratio-1">
+<head>
+  <meta charset="utf-8">
+  <title>水木书荟</title>
+  <script src="https://code.jquery.com/jquery-3.2.1.js"
+          integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+          crossorigin="anonymous"></script>
+    <link href="https://cdn.bootcss.com/light7/0.4.3/css/light7.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/light7/0.4.3/js/light7.js"></script>
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="//static.hdslb.com/images/favicon.ico">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="Access-Control-Allow-Origin" content="*">
+</head>
+<body>
+<header class="bar bar-nav">
+  <h1 class="title">管理员</h1>
+</header>
+<div class="content">
+  <div class="content-block-title">封禁/解封用户</div>
+  <div class="list-block">
+    <ul>
+      <li class="item-content">
+        <div class="item-inner">
+          <div class="item-title">
+          	<i class="icon icon-card"></i>
+          </div>
+          <div class="item-input">
+          	<input type="text" id="uid" placeholder="请输入用户ID">
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+    <div class="content-block">
+        <div class="row">
+            <div class="col-50" onclick="disableUser()"><a href="#" class="button button-big button-fill button-danger">封禁</a></div>
+            <div class="col-50" onclick="enableUser()"><a href="#" class="button button-big button-fill button-success">解封</a></div>
+        </div>
+    </div>
+    <div class="content-block-title">删除直播(此操作不可恢复)</div>
+    <div class="list-block">
+        <ul>
+            <li class="item-content">
+                <div class="item-inner">
+                    <div class="item-title">
+                        <i class="icon icon-card"></i>
+                    </div>
+                    <div class="item-input">
+                        <input type="text" id="lid" placeholder="请输入直播ID">
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="content-block">
+        <div class="row">
+            <div class="col-100" onclick="disableLive()"><a href="#" class="button button-big button-fill button-danger">封禁</a></div>
+        </div>
+    </div>
+    <script>
+        var serverurl = "http://q.aureliano.cc:4567";
+        function disableUser() {
+            $.ajax({
+                type: "POST",
+                xhrFields: {
+                    withCredentials: true
+                },
+                url: serverurl + "/users/" + $("#uid").val() + "/permission",
+                data:JSON.stringify({
+                    "permission":1
+                }),
+                success: function (data, status) {
+                    $.toast("操作完成");
+                },
+                error: function (data,status) {
+                    $.toast("发生了" + data.status+ "错误");
+                }
+            });
+        }
+        function enableUser() {
+            $.ajax({
+                type: "POST",
+                xhrFields: {
+                    withCredentials: true
+                },
+                url: serverurl + "/users/" + $("#uid").val() + "/permission",
+                data:JSON.stringify({
+                    "permission":200
+                }),
+                success: function (data, status) {
+                    $.toast("操作完成");
+                },
+                error: function (data,status) {
+                    $.toast("发生了" + data.status+ "错误");
+                }
+            });
+        }
+        function disableLive() {
+            $.ajax({
+                type: "DELETE",
+                xhrFields: {
+                    withCredentials: true
+                },
+                url: serverurl + "/lives/" + $("#lid").val(),
+                success: function (data, status) {
+                    $.toast("操作完成");
+                },
+                error: function (data,status) {
+                    $.toast("发生了" + data.status+ "错误");
+                }
+            });
+        }
+
+    </script>
+</div>
+</body>
+</html>
