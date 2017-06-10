@@ -2,7 +2,7 @@
  * Created by Midor on 2017/5/31.
  */
 var cover = 1;
-var serverurl = "http://q.aureliano.cc:4567";
+var serverurl = "https://lino.yi-ru.wang/api/v1";
 
 function createLive() {
     $.showPreloader("正在修改..");

@@ -2,7 +2,7 @@
  * Created by Midor on 2017/5/31.
  */
 var cover = 1;
-var serverurl = "http://q.aureliano.cc:4567";
+var serverurl = "https://lino.yi-ru.wang/api/v1";
 
 function createLive() {
     $.showPreloader("正在创建..");
@@ -37,7 +37,12 @@ function createLive() {
                 window.location.href="lives/live.html?lid=" + tmp.lid;
                 $.hidePreloader();
             }
+        },
+        error:function (data){
+            $.hidePreloader();
+            $.toast('发生了' + data.status + '错误');
         }
+
     })
 }
 

@@ -6,7 +6,7 @@
  });*/
 /*jshint multistr: true */
 //TODO: change serverurl and hide it during deployment
-var serverurl = "http://q.aureliano.cc:4567";
+var serverurl = "https://lino.yi-ru.wang/api/v1";
 var testlive = "./lives/live.html?lid=";
 $(document).ready(function () {
     // if($.cookie("Login_Success")==null)
@@ -66,7 +66,7 @@ Vue.component('live_item', {
         <div class="card-content" v-on:click="OnListItemClick(live)">\
             <div class="card-content-inner" >\
                 <p class="color-gray">开始于{{live.begin_time}}</p>\
-                <p>持续时间为{{live.last_time}}</p>\
+                <p>持续时间为{{live.last_time}}分钟</p>\
                 <p>{{live.description}}</p>\
             </div>\
         </div>\
@@ -129,7 +129,7 @@ var LiveList = new Vue({
                             title: item.name,
                             begin_time: new Date(item.begin_time).toLocaleString(),
                             description: item.description,
-                            last_time: formatSeconds(item.time_lasted),
+                            last_time: item.duration / 60000,
                             //coverpath: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1496073561214&di=b31cb40ac5e96a0169d6a21a86e1cd83&imgtype=0&src=http%3A%2F%2Fngnews.7xz.com%2Fuploadfile%2F2016%2F0629%2F20160629092602704.jpg",
                             coverpath: getCover(item.cover),
                             //likeamount: getlike(serverurl + "/lives/" + item.lid + "/like"),
@@ -138,8 +138,12 @@ var LiveList = new Vue({
                         });
                     });
                     LiveList.$data.latest = result.lives.length;
+
+                },
+                complete: function() {
                     $.hidePreloader();
                 }
+
             });
         }
     },

@@ -97,7 +97,7 @@
   </div>
 </div>
 <script>
-    var serverurl = "http://q.aureliano.cc:4567";
+    var serverurl = "https://lino.yi-ru.wang/api/v1";
     var reg = new RegExp("(^|&)uid=([^&]*)(&|$)");
     var r = window.location.search.substr(1).match(reg);
     var uid = r[2];
@@ -181,7 +181,7 @@
             $.each(result.messages, function (index, item) {
                 CommentList.$data.Comment_List.push({
                     mid: item.mid,
-                    content: item.content,
+                    content: item.content
                 });
             });
         }

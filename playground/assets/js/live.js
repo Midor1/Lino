@@ -1,4 +1,4 @@
-var serverurl = "http://q.aureliano.cc:4567";
+var serverurl = "https://lino.yi-ru.wang/api/v1";
 var Mode = 0;
 //0-all,1-hostonly
 var Listcache = [];
@@ -528,7 +528,10 @@ function createMessage(ReplyToMid) {
 
 
 			}
-		})
+		}),
+		error:function(data){
+			$.toast('发生了'+ data.status + '错误');
+		}
 	})
 }
 
@@ -643,7 +646,7 @@ function LivePushListener(baseurl, lid) {
 }
 if (localStorage.hostid !== localStorage.uid)
 	$("#hostbar").remove();
-livepushlistener = new LivePushListener("ws://q.aureliano.cc:4567/websocket/lives", getlid());
+livepushlistener = new LivePushListener("wss://lino.yi-ru.wang/api/v1/websocket/lives", getlid());
 
 function getNickname(uid) {
 
@@ -670,7 +673,7 @@ function getNickname(uid) {
 }
 
 function getLiveMessages(lid) {
-	// var serverurl = "http://q.aureliano.cc:4567"
+	// var serverurl = "https://lino.yi-ru.wang/api/v1"
 	var messages = [];
 	$.ajax({
 		type: "GET",

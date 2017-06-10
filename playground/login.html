@@ -14,6 +14,7 @@
 <link rel="shortcut icon" href="//static.hdslb.com/images/favicon.ico">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
+<base href="https://lino.yi-ru.wang/">
 
 
 </head>
@@ -24,7 +25,12 @@
 	  <h1 class="title">登录</h1>
 	</header>
 	<div class="content">
-	  <div class="list-block">
+	  <div class="content-block">
+		<p>
+          还没有账号? &nbsp; 点击<a href="register.html">这里</a>注册。
+        </p>
+	  </div>
+        <div class="list-block">
 		<ul>
 		  <!-- Text inputs -->
 		  <li>
@@ -56,7 +62,7 @@
 		  <div class="col-50"><a href="index.html#page-home" class="button button-big button-fill button-danger back">返回</a></div>
 		  <div class="col-50"><a href="#" class="button button-big button-fill button-success" onclick="Login()" >登录</a></div>
 			<script>
-                var serverurl = "http://q.aureliano.cc:4567";
+                var serverurl = "https://lino.yi-ru.wang/api/v1";
                 $('.list-block').bind('keydown',function(event){
                     if(event.keyCode == "13") {
                         Login();
