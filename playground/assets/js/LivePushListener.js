@@ -38,11 +38,11 @@ function LivePushListener(baseurl, lid, onMessage) {
 		this.onMessage(new LiveMessage(JSON.parse(e.data)));
 	}
 
-	this.ws_onopen = fucntion ws_onopen() {
+	this.ws_onopen = function ws_onopen() {
 		this.retry_time = 500;
 	}
 
-	this.wsconnect = fucntion wsconnect() {
+	this.wsconnect = function wsconnect() {
 		this.websocket = WebSocket(this.url);
 		this.websocket.onclose = this.ws_onclose;
 		this.websocket.onerror = this.ws_onerror;
