@@ -57,6 +57,11 @@
 		  <div class="col-50"><a href="#" class="button button-big button-fill button-success" onclick="Login()" >登录</a></div>
 			<script>
                 var serverurl = "http://q.aureliano.cc:4567";
+                $('.list-block').bind('keydown',function(event){
+                    if(event.keyCode == "13") {
+                        Login();
+                    }
+                });
                 function Login()
                 {
 

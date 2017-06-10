@@ -103,6 +103,11 @@
 		  <div class="col-50"><a href="#" onclick="Register()" class="button button-big button-fill button-success">注册</a></div>
 			<script>
                 var serverurl = "http://q.aureliano.cc:4567";
+                $('.content').bind('keydown',function(event){
+                    if(event.keyCode == "13") {
+                        Register();
+                    }
+                });
                 function Register()
                 {
                     password = $("#register_password_input").val();

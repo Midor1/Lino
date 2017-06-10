@@ -117,6 +117,7 @@ var LiveList = new Vue({
                     withCredentials: true
                 },
                 success: function (data, status) {
+                    var isLogined = localStorage.uid!=undefined;
                     result = JSON.parse(data);
                     var likes=[];
                     $.each(result.lives, function (index, item) {
@@ -133,7 +134,7 @@ var LiveList = new Vue({
                             coverpath: getCover(item.cover),
                             //likeamount: getlike(serverurl + "/lives/" + item.lid + "/like"),
                             likeamount: likes[index],
-                            href: "./lives/live.html?lid=" + item.lid
+                            href: isLogined?"./lives/live.html?lid=" + item.lid:"./login.html"
                         });
                     });
                     LiveList.$data.latest = result.lives.length;
