@@ -79,7 +79,7 @@ Vue.component('live_item', {
             <p>{{live.likeamount}}</p>\
             </div>\
             </div>\
-            <a href="#" class="link" onclick="More()">更多</a>\
+            <a href="#" class="link" onclick="$.toast(\'感谢您的反馈\')">举报</a>\
         </div>\
     </div>'
 });
