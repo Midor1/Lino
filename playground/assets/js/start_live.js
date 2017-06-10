@@ -8,6 +8,7 @@ function createLive() {
     $.showPreloader("正在创建..");
 
     var name=$("#name").val();
+    var duration=$("#duration").val();
     var type=$("#type").val();
     var time=$("#datetime-picker").val().replace(new RegExp("-","gm"),"/");
     var millisecond=(new Date(time)).getTime();
@@ -20,7 +21,7 @@ function createLive() {
                 "name":name,
                 "type":type,
                 "begin_time":millisecond,
-                "duration":36000,
+                "duration":duration * 60000,
                 "description":description, //Other properties will be added soon.
                 "cover":cover
             }
